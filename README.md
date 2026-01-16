@@ -1,4 +1,4 @@
-# Blog Pessoal - Textos Técnicos & Reflexões
+# Site Pessoal - Notas Técnicas & Ideias
 
 Um site pessoal minimalista para publicar textos técnicos e reflexivos, com suporte a Markdown e imagens locais. Os dados são armazenados localmente no navegador usando SQLite (via SQL.js).
 
