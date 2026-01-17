@@ -1,117 +1,132 @@
-# 🚀 GUIA RÁPIDO - Blog Pessoal
+# 🚀 GUIA RÁPIDO - Blog Pessoal (com Supabase)
 
-## ⚡ Início Rápido
+## ⚡ Início em 3 Passos
+
+### 1️⃣ Configurar Supabase (5 minutos)
+
+**Obrigatório!** Os dados ficam na nuvem PostgreSQL.
+
+1. Acesse [supabase.com](https://supabase.com)
+2. Crie projeto → Crie tabela `posts` (use o SQL)
+3. Copie URL e chave → Cole em `src/supabase.js`
+
+**✨ Sem 2FA obrigatório!**
+
+**📖 Detalhes completos:** [SUPABASE-CONFIG.md](./SUPABASE-CONFIG.md)
+
+**SQL para criar tabela:**
+```sql
+CREATE TABLE posts (
+  id BIGSERIAL PRIMARY KEY,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  content TEXT NOT NULL,
+  image TEXT,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Habilitar RLS
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+
+-- Permitir tudo (desenvolvimento)
+CREATE POLICY "Allow all" ON posts
+FOR ALL TO public
+USING (true) WITH CHECK (true);
+```
+
+### 2️⃣ Instalar e Rodar
 
 ```bash
-cd blog-pessoal
 npm install
 npm run dev
 ```
 
 Acesse: `http://localhost:5173`
 
-## 🔐 Primeiro Acesso
+### 3️⃣ Alterar Senha
 
-1. Vá para `/admin`
-2. Senha padrão: `admin123`
-3. **ALTERE A SENHA** em `src/pages/Admin.jsx` linha 6
-
-## ✨ Funcionalidades
-
-- ✅ Criar, editar e excluir posts
-- ✅ Suporte completo a Markdown
-- ✅ Upload de imagens locais
-- ✅ Banco de dados SQLite no navegador
-- ✅ Design minimalista e responsivo
-- ✅ Zero configuração de backend
-
-## 📝 Como Criar um Post
-
-1. Acesse `/admin`
-2. Preencha título e conteúdo (em Markdown)
-3. (Opcional) Faça upload de uma imagem
-4. Clique em "Publicar Post"
-
-## 💡 Dicas Importantes
-
-### Segurança
-- Altere a senha padrão em `src/pages/Admin.jsx`
-- A autenticação é básica, ideal para uso pessoal
-
-### Armazenamento
-- Dados salvos no localStorage do navegador
-- Imagens convertidas para base64
-- Limite: ~5-10MB (depende do navegador)
-
-### Backup
-Para fazer backup dos seus posts:
+Abra `src/pages/Admin.jsx` linha 6:
 
 ```javascript
-// No console do navegador (F12)
-console.log(localStorage.getItem('blog-database'));
-// Copie o resultado e salve em um arquivo
+const ADMIN_PASSWORD = 'sua-senha-forte-aqui';
 ```
 
-Para restaurar:
+## ✨ Recursos
 
-```javascript
-localStorage.setItem('blog-database', 'seu-backup-aqui');
-```
+✅ Posts na nuvem (Supabase PostgreSQL)  
+✅ Acessível de qualquer dispositivo  
+✅ Markdown + imagens  
+✅ Modo escuro/claro  
+✅ Design minimalista  
+✅ **Sem 2FA obrigatório!**  
 
-## 🎨 Personalização
+## 📝 Uso Rápido
 
-### Cores
-Edite `src/index.css`:
+1. `/admin` → Login com senha
+2. Criar post → Preencher formulário
+3. Publicar → Post aparece instantaneamente!
 
-```css
-:root {
-  --color-accent: #d4512e;  /* Cor de destaque */
-  --color-bg: #faf8f5;      /* Fundo */
-  --color-text: #1a1a1a;    /* Texto */
-}
-```
+## 🌐 Deploy no Vercel
 
-### Fontes
-Altere em `index.html` e `src/index.css`
-
-### Título do Site
-Edite `src/components/Header.jsx`
-
-## 📦 Deploy
-
-### Vercel (Recomendado)
 ```bash
-npm run build
-# Faça deploy da pasta dist/
+# 1. Push para GitHub
+git init
+git add .
+git commit -m "Blog pessoal"
+git push
+
+# 2. Importe no Vercel
+# 3. Configure variáveis:
+#    VITE_SUPABASE_URL
+#    VITE_SUPABASE_ANON_KEY
+# 4. Deploy!
 ```
 
-### Netlify
-- Configure: Build command: `npm run build`
-- Output directory: `dist`
+## 💡 Dicas
 
-## 🐛 Problemas Comuns
+**Gerenciar posts:**
+- Supabase Dashboard > Table Editor > posts
+- Veja, edite, delete diretamente no banco!
 
-**Posts não aparecem após criar**
-- Verifique se salvou o post
-- Atualize a página
+**Fazer queries SQL:**
+- Supabase > SQL Editor
+- Rode queries customizadas
 
-**Erro ao fazer upload de imagem**
-- Imagens muito grandes podem exceder o localStorage
-- Reduza o tamanho da imagem antes do upload
+**Backup:**
+- Automático pelo Supabase!
+- Ou exporte no dashboard
 
-**Perdi meus dados**
-- Os dados ficam no navegador
-- Se limpou cache/localStorage, os dados foram perdidos
-- Faça backups regulares!
+**Imagens:**
+- Base64 até 500KB funciona bem
+- Para maiores, use Supabase Storage
 
-## 📚 Recursos
+## 🐛 Problemas?
 
-- [Guia de Markdown](https://www.markdownguide.org/)
-- [Documentação React](https://react.dev/)
-- Exemplo de post: veja `EXEMPLO-POST.md`
+**Posts não aparecem:**
+- Configure Supabase primeiro (passo 1)
+- Crie a tabela `posts` com SQL
+- Configure políticas RLS
+- Veja console (F12) para erros
+
+**Erro de permissão:**
+- Execute o SQL de política (passo 1)
+
+**Build falha:**
+- `npm install` novamente
+- Verifique src/supabase.js
+
+## 📚 Documentação
+
+- [README.md](./README.md) - Completo
+- [SUPABASE-CONFIG.md](./SUPABASE-CONFIG.md) - Setup Supabase
+- [DEPLOY-VERCEL.md](./DEPLOY-VERCEL.md) - Deploy
+- [DARK-MODE.md](./DARK-MODE.md) - Modo escuro
+- [EXEMPLO-POST.md](./EXEMPLO-POST.md) - Markdown
 
 ---
 
 **Pronto para começar!** 🎉
 
-Qualquer dúvida, consulte o `README.md` completo.
+**Supabase > Firebase** para este caso! 😎  
+Sem 2FA forçado + SQL + Open-source = ❤️

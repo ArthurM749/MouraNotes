@@ -1,93 +1,133 @@
-const DB_NAME = 'blog-database';
+import { supabase } from './supabase';
 
-function getDatabase() {
-  const data = localStorage.getItem(DB_NAME);
-  if (!data) {
-    return { posts: [], nextId: 1 };
-  }
-  return JSON.parse(data);
-}
-
-function saveDatabase(db) {
-  localStorage.setItem(DB_NAME, JSON.stringify(db));
-}
-
+// Inicialização não é necessária com Supabase
 export async function initDB() {
-  // Garantir que o banco existe
-  if (!localStorage.getItem(DB_NAME)) {
-    saveDatabase({ posts: [], nextId: 1 });
-  }
+  // Supabase inicializa automaticamente
   return true;
 }
 
-export function getAllPosts() {
-  const db = getDatabase();
-  return db.posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-}
+// Buscar todos os posts
+export async function getAllPosts() {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-export function getPostBySlug(slug) {
-  const db = getDatabase();
-  return db.posts.find(post => post.slug === slug) || null;
-}
+    if (error) {
+      console.error('Erro ao buscar posts:', error);
+      return [];
+    }
 
-export function createPost(title, slug, content, image = null) {
-  const db = getDatabase();
-  
-  // Verificar se slug já existe
-  if (db.posts.some(post => post.slug === slug)) {
-    throw new Error('Já existe um post com este título (slug duplicado)');
+    return data || [];
+  } catch (error) {
+    console.error('Erro ao buscar posts:', error);
+    return [];
   }
-  
-  const newPost = {
-    id: db.nextId,
-    title,
-    slug,
-    content,
-    image,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  };
-  
-  db.posts.push(newPost);
-  db.nextId += 1;
-  saveDatabase(db);
-  
-  return newPost;
 }
 
-export function updatePost(id, title, slug, content, image = null) {
-  const db = getDatabase();
-  const index = db.posts.findIndex(post => post.id === id);
-  
-  if (index === -1) {
-    throw new Error('Post não encontrado');
+// Buscar post por slug
+export async function getPostBySlug(slug) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // Post não encontrado
+        return null;
+      }
+      console.error('Erro ao buscar post:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erro ao buscar post:', error);
+    return null;
   }
-  
-  // Verificar se o novo slug já existe em outro post
-  const existingPost = db.posts.find(post => post.slug === slug && post.id !== id);
-  if (existingPost) {
-    throw new Error('Já existe outro post com este título (slug duplicado)');
+}
+
+// Criar novo post
+export async function createPost(title, slug, content, image = null) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .insert([
+        {
+          title,
+          slug,
+          content,
+          image: image || null
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao criar post:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erro ao criar post:', error);
+    return null;
   }
-  
-  db.posts[index] = {
-    ...db.posts[index],
-    title,
-    slug,
-    content,
-    image,
-    updated_at: new Date().toISOString()
-  };
-  
-  saveDatabase(db);
-  return db.posts[index];
 }
 
-export function deletePost(id) {
-  const db = getDatabase();
-  db.posts = db.posts.filter(post => post.id !== id);
-  saveDatabase(db);
+// Atualizar post
+export async function updatePost(id, title, slug, content, image = null) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .update({
+        title,
+        slug,
+        content,
+        image: image || null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar post:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erro ao atualizar post:', error);
+    return null;
+  }
 }
 
+// Deletar post
+export async function deletePost(id) {
+  try {
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao deletar post:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Erro ao deletar post:', error);
+    return false;
+  }
+}
+
+// Gerar slug a partir do título
 export function generateSlug(title) {
   return title
     .toLowerCase()

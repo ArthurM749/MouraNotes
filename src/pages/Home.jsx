@@ -6,13 +6,20 @@ import './Home.css';
 export default function Home() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function loadPosts() {
-      await initDB();
-      const allPosts = getAllPosts();
-      setPosts(allPosts);
-      setLoading(false);
+      try {
+        await initDB();
+        const allPosts = await getAllPosts();
+        setPosts(allPosts);
+        setLoading(false);
+      } catch (err) {
+        console.error('Erro ao carregar posts:', err);
+        setError(err.message);
+        setLoading(false);
+      }
     }
     loadPosts();
   }, []);
@@ -25,10 +32,31 @@ export default function Home() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="container">
+        <div className="error-state">
+          <h2>⚠️ Erro ao carregar posts</h2>
+          <p>{error}</p>
+          <div className="error-help">
+            <p><strong>Possíveis soluções:</strong></p>
+            <ul>
+              <li>Verifique se configurou o Supabase em <code>src/supabase.js</code></li>
+              <li>Certifique-se que criou a tabela <code>posts</code> no Supabase</li>
+              <li>Verifique se configurou as políticas RLS</li>
+              <li>Abra o console do navegador (F12) para mais detalhes</li>
+            </ul>
+            <p>📖 Leia <strong>SUPABASE-CONFIG.md</strong> para instruções completas</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <div className="hero">
-        <h1 className="hero-title">Notas Técnicas & Ideias</h1>
+        <h1 className="hero-title">Textos Técnicos & Reflexões</h1>
         <p className="hero-subtitle">
           Um espaço pessoal para compartilhar pensamentos, aprendizados e explorações técnicas
         </p>

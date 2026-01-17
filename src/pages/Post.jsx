@@ -12,7 +12,7 @@ export default function Post() {
   useEffect(() => {
     async function loadPost() {
       await initDB();
-      const foundPost = getPostBySlug(slug);
+      const foundPost = await getPostBySlug(slug);
       setPost(foundPost);
       setLoading(false);
     }

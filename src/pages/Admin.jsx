@@ -27,7 +27,7 @@ export default function Admin() {
 
   async function loadPosts() {
     await initDB();
-    const allPosts = getAllPosts();
+    const allPosts = await getAllPosts();
     setPosts(allPosts);
   }
 
@@ -48,7 +48,7 @@ export default function Admin() {
     setPassword('');
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     
     if (!formData.title || !formData.content) {
@@ -59,14 +59,14 @@ export default function Admin() {
     const slug = generateSlug(formData.title);
 
     if (editingPost) {
-      updatePost(editingPost.id, formData.title, slug, formData.content, formData.image || null);
+      await updatePost(editingPost.id, formData.title, slug, formData.content, formData.image || null);
       setEditingPost(null);
     } else {
-      createPost(formData.title, slug, formData.content, formData.image || null);
+      await createPost(formData.title, slug, formData.content, formData.image || null);
     }
 
     setFormData({ title: '', content: '', image: '' });
-    loadPosts();
+    await loadPosts();
   }
 
   function handleEdit(post) {
@@ -79,10 +79,10 @@ export default function Admin() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function handleDelete(id) {
+  async function handleDelete(id) {
     if (confirm('Tem certeza que deseja excluir este post?')) {
-      deletePost(id);
-      loadPosts();
+      await deletePost(id);
+      await loadPosts();
     }
   }
 
