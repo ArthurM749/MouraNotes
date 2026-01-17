@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getAllPosts, createPost, updatePost, deletePost, initDB, generateSlug } from '../database';
 import './Admin.css';
 
-const ADMIN_PASSWORD = '@Pato6415'; // Altere esta senha!
+const ADMIN_PASSWORD = '@Duck6415'; // Altere esta senha!
 
 export default function Admin() {
   const [authenticated, setAuthenticated] = useState(false);
