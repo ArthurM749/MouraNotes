@@ -56,7 +56,7 @@ export default function Home() {
   return (
     <div className="container">
       <div className="hero">
-        <h1 className="hero-title">Textos Técnicos & Reflexões</h1>
+        <h1 className="hero-title">Notas Técnicas & Ideias</h1>
         <p className="hero-subtitle">
           Um espaço pessoal para compartilhar pensamentos, aprendizados e explorações técnicas
         </p>
