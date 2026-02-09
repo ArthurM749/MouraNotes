@@ -119,9 +119,6 @@ git push
 ## 📚 Documentação
 
 - [README.md](./README.md) - Completo
-- [SUPABASE-CONFIG.md](./SUPABASE-CONFIG.md) - Setup Supabase
-- [DEPLOY-VERCEL.md](./DEPLOY-VERCEL.md) - Deploy
-- [DARK-MODE.md](./DARK-MODE.md) - Modo escuro
 - [EXEMPLO-POST.md](./EXEMPLO-POST.md) - Markdown
 
 ---
