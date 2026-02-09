@@ -127,6 +127,3 @@ git push
 ---
 
 **Pronto para começar!** 🎉
-
-**Supabase > Firebase** para este caso! 😎  
-Sem 2FA forçado + SQL + Open-source = ❤️
