@@ -200,7 +200,7 @@ export default function Admin() {
               {posts.map(post => (
                 <div key={post.id} className="post-item">
                   <div className="post-item-content">
-                    <h3><Link to={`/post/${post.slug}`}>{post.title}</Link></h3>
+                    <Link to={`/post/${post.slug}`}>{post.title}</Link>
                     <p className="post-item-date">
                       {new Date(post.created_at).toLocaleDateString('pt-BR')}
                     </p>
