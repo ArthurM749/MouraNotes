@@ -51,7 +51,7 @@ O projeto usa Supabase para armazenar dados na nuvem. **Sem isso, o site não fu
 **📖 Leia o guia completo:** [SUPABASE-CONFIG.md](./SUPABASE-CONFIG.md)
 
 **Resumo super rápido:**
-1. Crie conta no [Supabase](https://supabase.com) (grátis, **sem 2FA obrigatório**!)
+1. Crie conta no [Supabase](https://supabase.com) 
 2. Crie um novo projeto
 3. Crie a tabela `posts` (use o SQL fornecido)
 4. Configure políticas de segurança (RLS)
