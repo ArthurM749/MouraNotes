@@ -209,14 +209,14 @@ export default function Admin() {
                   <button
                     type="button"
                     className={`tab-button ${!showPreview ? 'active' : ''}`}
-                    onClick={() => setShowPreview(false)}
+                    onClick={() => setShowPreview(true)}
                   >
                     ✏️ Editar
                   </button>
                   <button
                     type="button"
                     className={`tab-button ${showPreview ? 'active' : ''}`}
-                    onClick={() => setShowPreview(true)}
+                    onClick={() => setShowPreview(false)}
                   >
                     👁️ Preview
                   </button>
