@@ -1,9 +1,15 @@
+/* =========================
+   CONTAINER
+========================= */
 .admin-container {
-  max-width: 1000px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 3rem 1rem;
 }
 
+/* =========================
+ LOGIN
+========================= */
 .login-card {
   max-width: 400px;
   margin: 4rem auto;
@@ -25,6 +31,9 @@
   margin-bottom: 2rem;
 }
 
+/* =========================
+ HEADER ADMIN
+========================= */
 .admin-header {
   display: flex;
   justify-content: space-between;
@@ -38,13 +47,16 @@
   margin-bottom: 0;
 }
 
+/* =========================
+ LAYOUT
+========================= */
 .admin-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
 }
 
-.form-section,
+.form-section-large,
 .posts-section {
   background-color: var(--color-bg);
   padding: 2rem;
@@ -52,12 +64,15 @@
   border: 1px solid var(--color-border);
 }
 
-.form-section h2,
+.form-section-large h2,
 .posts-section h2 {
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
 }
 
+/* =========================
+ FORMULÁRIOS
+========================= */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -77,11 +92,13 @@
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 .input-field:focus,
 .textarea-field:focus {
-  outline: none;
+  outline: 0;
   border-color: var(--color-accent);
 }
 
@@ -91,6 +108,164 @@
   line-height: 1.5;
 }
 
+/* =========================
+ EDITOR
+========================= */
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.editor-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab-button {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  color: var(--color-text-secondary);
+  font-family: var(--font-serif);
+}
+
+.tab-button:hover {
+  background-color: var(--color-hover);
+  border-color: var(--color-accent);
+}
+
+.tab-button.active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.editor-container {
+  min-height: 500px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.editor-textarea {
+  width: 100%;
+  min-height: 500px;
+  border: none;
+  padding: 1rem;
+  font-size: 0.95rem;
+  resize: vertical;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.editor-textarea:focus {
+  outline: 0;
+}
+
+/* =========================
+ MARKDOWN PREVIEW
+========================= */
+.markdown-preview {
+  padding: 1.5rem;
+  min-height: 500px;
+  overflow-y: auto;
+  background-color: var(--color-bg);
+  font-family: var(--font-serif);
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.markdown-preview h1 {
+  font-size: 2rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.markdown-preview h1:first-child {
+  margin-top: 0;
+}
+
+.markdown-preview h2 {
+  font-size: 1.5rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.markdown-preview h3 {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.markdown-preview p {
+  margin-bottom: 1rem;
+}
+
+.markdown-preview code {
+  background-color: var(--color-code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.markdown-preview pre {
+  background-color: var(--color-pre-bg);
+  color: var(--color-pre-text);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.markdown-preview pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.markdown-preview blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.markdown-preview ol,
+.markdown-preview ul {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.markdown-preview li {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.markdown-preview a {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.markdown-preview hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2rem 0;
+}
+
+/* =========================
+ IMAGEM
+========================= */
 .image-preview {
   margin-top: 1rem;
   border-radius: 4px;
@@ -103,6 +278,9 @@
   height: auto;
 }
 
+/* =========================
+ BOTÕES
+========================= */
 .form-actions {
   display: flex;
   gap: 1rem;
@@ -121,7 +299,7 @@
 
 .btn-primary {
   background-color: var(--color-accent);
-  color: white;
+  color: #fff;
 }
 
 .btn-primary:hover {
@@ -137,10 +315,35 @@
   background-color: #d0cdc8;
 }
 
+/* =========================
+ POSTS
+========================= */
 .posts-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Scrollbar */
+.posts-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.posts-list::-webkit-scrollbar-track {
+  background: var(--color-hover);
+  border-radius: 4px;
+}
+
+.posts-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+.posts-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
 }
 
 .post-item {
@@ -174,7 +377,7 @@
 }
 
 .btn-icon {
-  background: none;
+  background: transparent;
   border: none;
   font-size: 1.25rem;
   cursor: pointer;
@@ -197,32 +400,39 @@
   padding: 2rem;
 }
 
-@media (max-width: 768px) {
+/* =========================
+ RESPONSIVO
+========================= */
+@media (max-width: 1024px) {
   .admin-container {
-    padding: 2rem 1rem;
+      padding: 2rem 1rem;
   }
-  
+
   .admin-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
   }
-  
+
   .admin-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+      grid-template-columns: 1fr;
+      gap: 2rem;
   }
-  
-  .form-section,
+
+  .form-section-large,
   .posts-section {
-    padding: 1.5rem;
+      padding: 1.5rem;
   }
-  
+
   .form-actions {
-    flex-direction: column;
+      flex-direction: column;
   }
-  
+
   .btn {
-    width: 100%;
+      width: 100%;
+  }
+
+  .posts-list {
+      max-height: 50vh;
   }
 }

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { marked } from 'marked';
 import { getAllPosts, createPost, updatePost, deletePost, initDB, generateSlug } from '../database';
 import './Admin.css';
 
@@ -14,6 +16,7 @@ export default function Admin() {
     content: '',
     image: ''
   });
+  const [showPreview, setShowPreview] = useState(true);
 
   useEffect(() => {
     // Verificar se já está autenticado
@@ -136,7 +139,40 @@ export default function Admin() {
       </div>
 
       <div className="admin-content">
-        <div className="form-section">
+        <div className="posts-section">
+          <h2>Posts Publicados ({posts.length})</h2>
+          
+          {posts.length === 0 ? (
+            <p className="empty-message">Nenhum post publicado ainda.</p>
+          ) : (
+            <div className="posts-list">
+              {posts.map(post => (
+                <div key={post.id} className="post-item">
+                  <div className="post-item-content">
+                    <h3>
+                      <Link to={`/post/${post.slug}`} className="post-item-link" target="_self" rel="noopener noreferrer">
+                        {post.title}
+                      </Link>
+                    </h3>
+                    <p className="post-item-date">
+                      {new Date(post.created_at).toLocaleDateString('pt-BR')}
+                    </p>
+                  </div>
+                  <div className="post-item-actions">
+                    <button onClick={() => handleEdit(post)} className="btn-icon" title="Editar">
+                      ✏️
+                    </button>
+                    <button onClick={() => handleDelete(post.id)} className="btn-icon delete" title="Excluir">
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="form-section-large">
           <h2>{editingPost ? 'Editar Post' : 'Novo Post'}</h2>
           
           <form onSubmit={handleSubmit}>
@@ -167,14 +203,42 @@ export default function Admin() {
             </div>
 
             <div className="form-group">
-              <label>Conteúdo (Markdown)</label>
-              <textarea
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                className="textarea-field"
-                placeholder="Digite o conteúdo em Markdown..."
-                rows="15"
-              />
+              <div className="editor-header">
+                <label>Conteúdo (Markdown)</label>
+                <div className="editor-tabs">
+                  <button
+                    type="button"
+                    className={`tab-button ${!showPreview ? 'active' : ''}`}
+                    onClick={() => setShowPreview(false)}
+                  >
+                    ✏️ Editar
+                  </button>
+                  <button
+                    type="button"
+                    className={`tab-button ${showPreview ? 'active' : ''}`}
+                    onClick={() => setShowPreview(true)}
+                  >
+                    👁️ Preview
+                  </button>
+                </div>
+              </div>
+              
+              <div className="editor-container">
+                {!showPreview ? (
+                  <textarea
+                    value={formData.content}
+                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                    className="textarea-field editor-textarea"
+                    placeholder="Digite o conteúdo em Markdown..."
+                    rows="20"
+                  />
+                ) : (
+                  <div 
+                    className="markdown-preview"
+                    dangerouslySetInnerHTML={{ __html: marked(formData.content || '*Nenhum conteúdo ainda...*') }}
+                  />
+                )}
+              </div>
             </div>
 
             <div className="form-actions">
@@ -188,35 +252,6 @@ export default function Admin() {
               )}
             </div>
           </form>
-        </div>
-
-        <div className="posts-section">
-          <h2>Posts Publicados ({posts.length})</h2>
-          
-          {posts.length === 0 ? (
-            <p className="empty-message">Nenhum post publicado ainda.</p>
-          ) : (
-            <div className="posts-list">
-              {posts.map(post => (
-                <div key={post.id} className="post-item">
-                  <div className="post-item-content">
-                    <h3>{post.title}</h3>
-                    <p className="post-item-date">
-                      {new Date(post.created_at).toLocaleDateString('pt-BR')}
-                    </p>
-                  </div>
-                  <div className="post-item-actions">
-                    <button onClick={() => handleEdit(post)} className="btn-icon">
-                      ✏️
-                    </button>
-                    <button onClick={() => handleDelete(post.id)} className="btn-icon delete">
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </div>
