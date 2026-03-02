@@ -5,8 +5,12 @@ import './Home.css';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [layout, setLayout] = useState('list'); // 'list' ou 'grid'
 
   useEffect(() => {
     async function loadPosts() {
@@ -14,6 +18,7 @@ export default function Home() {
         await initDB();
         const allPosts = await getAllPosts();
         setPosts(allPosts);
+        setFilteredPosts(allPosts);
         setLoading(false);
       } catch (err) {
         console.error('Erro ao carregar posts:', err);
@@ -23,6 +28,18 @@ export default function Home() {
     }
     loadPosts();
   }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredPosts(posts);
+    } else {
+      const filtered = posts.filter(post =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.content.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredPosts(filtered);
+    }
+  }, [searchTerm, posts]);
 
   if (loading) {
     return (
@@ -62,14 +79,70 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="posts-grid">
-        {posts.length === 0 ? (
+      <div className="controls-bar">
+        <div className={`search-container ${searchExpanded ? 'expanded' : ''}`}>
+          <button 
+            className="search-icon"
+            onMouseEnter={() => setSearchExpanded(true)}
+            onClick={() => setSearchExpanded(true)}
+            aria-label="Pesquisar"
+          >
+            🔍
+          </button>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Pesquisar posts..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onBlur={() => {
+              if (searchTerm === '') {
+                setSearchExpanded(false);
+              }
+            }}
+          />
+        </div>
+
+        <div className="layout-toggle">
+          <button
+            className={`layout-btn ${layout === 'list' ? 'active' : ''}`}
+            onClick={() => setLayout('list')}
+            title="Visualização em lista"
+          >
+            ☰
+          </button>
+          <button
+            className={`layout-btn ${layout === 'grid' ? 'active' : ''}`}
+            onClick={() => setLayout('grid')}
+            title="Visualização em grade"
+          >
+            ⊞
+          </button>
+        </div>
+      </div>
+
+      <div className={`posts-container ${layout}`}>
+        {filteredPosts.length === 0 ? (
           <div className="empty-state">
-            <p>Nenhum post publicado ainda.</p>
-            <p className="empty-hint">Os posts criados na área administrativa aparecerão aqui.</p>
+            {searchTerm ? (
+              <>
+                <p>Nenhum post encontrado para "{searchTerm}"</p>
+                <button 
+                  className="clear-search"
+                  onClick={() => setSearchTerm('')}
+                >
+                  Limpar pesquisa
+                </button>
+              </>
+            ) : (
+              <>
+                <p>Nenhum post publicado ainda.</p>
+                <p className="empty-hint">Os posts criados na área administrativa aparecerão aqui.</p>
+              </>
+            )}
           </div>
         ) : (
-          posts.map(post => (
+          filteredPosts.map(post => (
             <article key={post.id} className="post-card">
               {post.image && (
                 <div className="post-image">

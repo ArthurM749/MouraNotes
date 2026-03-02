@@ -365,6 +365,17 @@
   margin-bottom: 0.25rem;
 }
 
+.post-item-link {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.post-item-link:hover {
+  color: var(--color-accent);
+  opacity: 1;
+}
+
 .post-item-date {
   font-size: 0.85rem;
   color: var(--color-text-secondary);
@@ -417,6 +428,17 @@
   .admin-content {
       grid-template-columns: 1fr;
       gap: 2rem;
+      /* Inverter ordem no mobile: formulário primeiro, posts depois */
+      display: flex;
+      flex-direction: column;
+  }
+
+  .form-section-large {
+      order: 1; /* Formulário em cima */
+  }
+
+  .posts-section {
+      order: 2; /* Lista embaixo */
   }
 
   .form-section-large,
