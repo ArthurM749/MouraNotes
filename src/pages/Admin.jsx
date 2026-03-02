@@ -109,7 +109,7 @@ export default function Admin() {
     return (
       <div className="admin-container">
         <div className="login-card">
-          <h1>Área Administrativa</h1>
+          <h1>Admin</h1>
           <p className="login-subtitle">Digite a senha para acessar</p>
           <form onSubmit={handleLogin}>
             <input
