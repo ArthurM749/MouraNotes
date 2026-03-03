@@ -141,9 +141,11 @@
 .posts-container.grid .post-card {
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding-bottom: 0;
+  padding-bottom: 0 !important; /* Remove padding-bottom da lista */
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .posts-container.grid .post-card:hover {
@@ -151,8 +153,16 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.posts-container.grid .post-image {
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
 .posts-container.grid .post-content {
   padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .posts-container.grid .post-title {
@@ -166,25 +176,32 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
+}
+
+.posts-container.grid .read-more {
+  margin-top: auto;
 }
 
 /* =========================
  POST CARDS
 ========================= */
 .post-card {
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 3rem;
   transition: transform 0.2s ease;
   animation: slideUp 0.5s ease-out backwards;
 }
 
-.post-card:nth-child(1) { animation-delay: 0.1s; }
-.post-card:nth-child(2) { animation-delay: 0.2s; }
-.post-card:nth-child(3) { animation-delay: 0.3s; }
-.post-card:nth-child(4) { animation-delay: 0.4s; }
-.post-card:nth-child(5) { animation-delay: 0.5s; }
+/* Layout Lista - estilo padrão */
+.posts-container.list .post-card {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 3rem;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-radius: 0;
+}
 
-.post-card:last-child {
+.posts-container.list .post-card:last-child {
   border-bottom: none;
 }
 
@@ -394,5 +411,19 @@
   
   .post-title {
     font-size: 1.5rem;
+  }
+}
+
+/* Tablet - 2 colunas */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .posts-container.grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop grande - até 3 colunas */
+@media (min-width: 1400px) {
+  .posts-container.grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
