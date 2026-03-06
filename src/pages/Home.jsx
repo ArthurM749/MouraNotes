@@ -75,7 +75,7 @@ export default function Home() {
       <div className="hero">
         <h1 className="hero-title">Notas Técnicas & Ideias</h1>
         <p className="hero-subtitle">
-          Um espaço pessoal para compartilhar pensamentos, aprendizados e explorações técnicas
+          Um espaço para compartilhar pensamentos, aprendizados e explorações técnicas
         </p>
       </div>
 
