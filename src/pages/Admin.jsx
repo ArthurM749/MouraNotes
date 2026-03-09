@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { getAllPosts, createPost, updatePost, deletePost, initDB, generateSlug } from '../database';
+import { verifyAdminPassword, updateAdminPassword } from '../auth';
 import './Admin.css';
-
-const ADMIN_PASSWORD = '@Duck6415'; // Altere esta senha!
 
 export default function Admin() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -17,6 +16,13 @@ export default function Admin() {
     image: ''
   });
   const [showPreview, setShowPreview] = useState(true);
+  const [loginError, setLoginError] = useState('');
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [passwordChangeData, setPasswordChangeData] = useState({
+    current: '',
+    new: '',
+    confirm: ''
+  });
 
   useEffect(() => {
     // Verificar se já está autenticado
@@ -34,14 +40,20 @@ export default function Admin() {
     setPosts(allPosts);
   }
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
+    setLoginError('');
+    
+    const isValid = await verifyAdminPassword(password);
+    
+    if (isValid) {
       setAuthenticated(true);
       sessionStorage.setItem('admin-auth', 'true');
+      setPassword('');
       loadPosts();
     } else {
-      alert('Senha incorreta!');
+      setLoginError('Senha incorreta!');
+      setPassword('');
     }
   }
 
@@ -49,6 +61,33 @@ export default function Admin() {
     setAuthenticated(false);
     sessionStorage.removeItem('admin-auth');
     setPassword('');
+  }
+
+  async function handlePasswordChange(e) {
+    e.preventDefault();
+    
+    if (passwordChangeData.new !== passwordChangeData.confirm) {
+      alert('As senhas não conferem!');
+      return;
+    }
+
+    if (passwordChangeData.new.length < 6) {
+      alert('A nova senha deve ter pelo menos 6 caracteres!');
+      return;
+    }
+
+    const result = await updateAdminPassword(
+      passwordChangeData.current,
+      passwordChangeData.new
+    );
+
+    if (result.success) {
+      alert('Senha alterada com sucesso!');
+      setShowPasswordChange(false);
+      setPasswordChangeData({ current: '', new: '', confirm: '' });
+    } else {
+      alert(result.error || 'Erro ao alterar senha');
+    }
   }
 
   async function handleSubmit(e) {
@@ -109,7 +148,7 @@ export default function Admin() {
     return (
       <div className="admin-container">
         <div className="login-card">
-          <h1>Admin</h1>
+          <h1>Área Administrativa</h1>
           <p className="login-subtitle">Digite a senha para acessar</p>
           <form onSubmit={handleLogin}>
             <input
@@ -120,6 +159,7 @@ export default function Admin() {
               className="input-field"
               autoFocus
             />
+            {loginError && <p className="login-error">{loginError}</p>}
             <button type="submit" className="btn btn-primary">
               Entrar
             </button>
@@ -133,10 +173,69 @@ export default function Admin() {
     <div className="admin-container">
       <div className="admin-header">
         <h1>Administração</h1>
-        <button onClick={handleLogout} className="btn btn-secondary">
-          Sair
-        </button>
+        <div className="header-buttons">
+          <button onClick={() => setShowPasswordChange(!showPasswordChange)} className="btn btn-secondary">
+            🔑 Trocar Senha
+          </button>
+          <button onClick={handleLogout} className="btn btn-secondary">
+            Sair
+          </button>
+        </div>
       </div>
+
+      {showPasswordChange && (
+        <div className="password-change-modal">
+          <div className="password-change-card">
+            <h2>Alterar Senha</h2>
+            <form onSubmit={handlePasswordChange}>
+              <div className="form-group">
+                <label>Senha Atual</label>
+                <input
+                  type="password"
+                  value={passwordChangeData.current}
+                  onChange={(e) => setPasswordChangeData({...passwordChangeData, current: e.target.value})}
+                  className="input-field"
+                  placeholder="Digite a senha atual"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Nova Senha</label>
+                <input
+                  type="password"
+                  value={passwordChangeData.new}
+                  onChange={(e) => setPasswordChangeData({...passwordChangeData, new: e.target.value})}
+                  className="input-field"
+                  placeholder="Digite a nova senha (mín. 6 caracteres)"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Confirmar Nova Senha</label>
+                <input
+                  type="password"
+                  value={passwordChangeData.confirm}
+                  onChange={(e) => setPasswordChangeData({...passwordChangeData, confirm: e.target.value})}
+                  className="input-field"
+                  placeholder="Digite novamente a nova senha"
+                  required
+                />
+              </div>
+              <div className="form-actions">
+                <button type="submit" className="btn btn-primary">
+                  Alterar Senha
+                </button>
+                <button type="button" onClick={() => {
+                  setShowPasswordChange(false);
+                  setPasswordChangeData({ current: '', new: '', confirm: '' });
+                }} className="btn btn-secondary">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="admin-content">
         <div className="posts-section">
@@ -150,7 +249,7 @@ export default function Admin() {
                 <div key={post.id} className="post-item">
                   <div className="post-item-content">
                     <h3>
-                      <Link to={`/post/${post.slug}`} className="post-item-link" target="_self" rel="noopener noreferrer">
+                      <Link to={`/post/${post.slug}`} className="post-item-link" target="_blank" rel="noopener noreferrer">
                         {post.title}
                       </Link>
                     </h3>
