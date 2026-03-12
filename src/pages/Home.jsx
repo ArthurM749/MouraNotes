@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getAllPosts, initDB } from '../database';
+import { SkeletonPostList } from '../components/SkeletonPost';
+import Tag from '../components/Tag';
 import './Home.css';
 
 export default function Home() {
@@ -11,6 +13,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [layout, setLayout] = useState('list'); // 'list' ou 'grid'
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedTag = searchParams.get('tag');
 
   useEffect(() => {
     async function loadPosts() {
@@ -30,21 +34,44 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredPosts(posts);
-    } else {
-      const filtered = posts.filter(post =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.content.toLowerCase().includes(searchTerm.toLowerCase())
+    let filtered = posts;
+
+    // Filtrar por tag se selecionada
+    if (selectedTag) {
+      filtered = filtered.filter(post => 
+        post.tags && post.tags.includes(selectedTag)
       );
-      setFilteredPosts(filtered);
     }
-  }, [searchTerm, posts]);
+
+    // Filtrar por termo de busca
+    if (searchTerm.trim() !== '') {
+      filtered = filtered.filter(post => {
+        const matchTitle = post.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchContent = post.content.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchTags = post.tags && post.tags.some(tag => 
+          tag.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        return matchTitle || matchContent || matchTags;
+      });
+    }
+
+    setFilteredPosts(filtered);
+  }, [searchTerm, selectedTag, posts]);
+
+  const clearTagFilter = () => {
+    setSearchParams({});
+  };
 
   if (loading) {
     return (
       <div className="container">
-        <div className="loading">Carregando...</div>
+        <div className="hero">
+          <h1 className="hero-title">Moura's Notes</h1>
+          <p className="hero-subtitle">Um espaço para compartilhar pensamentos, aprendizados e explorações técnicas</p>
+        </div>
+        <div className={`posts-container ${layout}`}>
+          <SkeletonPostList count={3} layout={layout} />
+        </div>
       </div>
     );
   }
@@ -73,7 +100,7 @@ export default function Home() {
   return (
     <div className="container">
       <div className="hero">
-        <h1 className="hero-title">Notas Técnicas & Ideias</h1>
+        <h1 className="hero-title">Moura's Notes</h1>
         <p className="hero-subtitle">
           Um espaço para compartilhar pensamentos, aprendizados e explorações técnicas
         </p>
@@ -121,6 +148,16 @@ export default function Home() {
         </div>
       </div>
 
+      {selectedTag && (
+        <div className="active-filter">
+          <span className="filter-label">Filtrando por tag:</span>
+          <Tag name={selectedTag} clickable={false} />
+          <button onClick={clearTagFilter} className="clear-filter">
+            × Limpar filtro
+          </button>
+        </div>
+      )}
+
       <div className={`posts-container ${layout}`}>
         {filteredPosts.length === 0 ? (
           <div className="empty-state">
@@ -160,6 +197,13 @@ export default function Home() {
                     day: 'numeric'
                   })}
                 </div>
+                {post.tags && post.tags.length > 0 && (
+                  <div className="tags-container">
+                    {post.tags.map(tag => (
+                      <Tag key={tag} name={tag} small />
+                    ))}
+                  </div>
+                )}
                 <p className="post-excerpt">
                   {post.content.substring(0, 200).replace(/[#*`]/g, '')}...
                 </p>

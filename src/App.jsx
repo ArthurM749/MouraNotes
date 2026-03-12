@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Post from './pages/Post';
 import Admin from './pages/Admin';
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/post/:slug" element={<Post />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
+        <ScrollToTop />
       </BrowserRouter>
       <Analytics />
     </>
