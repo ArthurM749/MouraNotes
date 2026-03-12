@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { getAllPosts, createPost, updatePost, deletePost, initDB, generateSlug } from '../database';
-import { verifyAdminPassword, updateAdminPassword } from '../Auth';
+import { verifyAdminPassword, updateAdminPassword } from '../auth';
+import Tag from '../components/Tag';
 import './Admin.css';
 
 export default function Admin() {
@@ -13,7 +14,11 @@ export default function Admin() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    image: ''
+    image: '',
+    tags: '',
+    collection: '',
+    collectionOrder: '',
+    status: 'published'
   });
   const [showPreview, setShowPreview] = useState(true);
   const [loginError, setLoginError] = useState('');
@@ -36,7 +41,7 @@ export default function Admin() {
 
   async function loadPosts() {
     await initDB();
-    const allPosts = await getAllPosts();
+    const allPosts = await getAllPosts(true); // true = incluir rascunhos
     setPosts(allPosts);
   }
 
@@ -99,15 +104,49 @@ export default function Admin() {
     }
 
     const slug = generateSlug(formData.title);
+    
+    // Processar tags (converter string para array)
+    const tagsArray = formData.tags
+      ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+      : [];
+    
+    const collectionOrder = formData.collectionOrder ? parseInt(formData.collectionOrder) : null;
 
     if (editingPost) {
-      await updatePost(editingPost.id, formData.title, slug, formData.content, formData.image || null);
+      await updatePost(
+        editingPost.id,
+        formData.title,
+        slug,
+        formData.content,
+        formData.image || null,
+        tagsArray,
+        formData.collection || null,
+        collectionOrder,
+        formData.status
+      );
       setEditingPost(null);
     } else {
-      await createPost(formData.title, slug, formData.content, formData.image || null);
+      await createPost(
+        formData.title,
+        slug,
+        formData.content,
+        formData.image || null,
+        tagsArray,
+        formData.collection || null,
+        collectionOrder,
+        formData.status
+      );
     }
 
-    setFormData({ title: '', content: '', image: '' });
+    setFormData({
+      title: '',
+      content: '',
+      image: '',
+      tags: '',
+      collection: '',
+      collectionOrder: '',
+      status: 'published'
+    });
     await loadPosts();
   }
 
@@ -116,7 +155,11 @@ export default function Admin() {
     setFormData({
       title: post.title,
       content: post.content,
-      image: post.image || ''
+      image: post.image || '',
+      tags: post.tags ? post.tags.join(', ') : '',
+      collection: post.collection || '',
+      collectionOrder: post.collection_order || '',
+      status: post.status || 'published'
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -130,7 +173,15 @@ export default function Admin() {
 
   function handleCancel() {
     setEditingPost(null);
-    setFormData({ title: '', content: '', image: '' });
+    setFormData({
+      title: '',
+      content: '',
+      image: '',
+      tags: '',
+      collection: '',
+      collectionOrder: '',
+      status: 'published'
+    });
   }
 
   function handleImageUpload(e) {
@@ -252,10 +303,20 @@ export default function Admin() {
                       <Link to={`/post/${post.slug}`} className="post-item-link" target="_blank" rel="noopener noreferrer">
                         {post.title}
                       </Link>
+                      {post.status === 'draft' && <span className="draft-badge">Rascunho</span>}
                     </h3>
-                    <p className="post-item-date">
-                      {new Date(post.created_at).toLocaleDateString('pt-BR')}
-                    </p>
+                    <div className="post-item-meta">
+                      <p className="post-item-date">
+                        {new Date(post.created_at).toLocaleDateString('pt-BR')}
+                      </p>
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="post-item-tags">
+                          {post.tags.map(tag => (
+                            <Tag key={tag} name={tag} small clickable={false} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="post-item-actions">
                     <button onClick={() => handleEdit(post)} className="btn-icon" title="Editar">
@@ -299,6 +360,70 @@ export default function Admin() {
                   <img src={formData.image} alt="Preview" />
                 </div>
               )}
+            </div>
+
+            <div className="form-group">
+              <label>Tags (separadas por vírgula)</label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                className="input-field"
+                placeholder="Ex: React, JavaScript, Tutorial"
+              />
+              <small className="field-hint">As tags ajudam a organizar e filtrar seus posts</small>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Coleção (opcional)</label>
+                <input
+                  type="text"
+                  value={formData.collection}
+                  onChange={(e) => setFormData({ ...formData, collection: e.target.value })}
+                  className="input-field"
+                  placeholder="Ex: Série React Básico"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Ordem na Coleção</label>
+                <input
+                  type="number"
+                  value={formData.collectionOrder}
+                  onChange={(e) => setFormData({ ...formData, collectionOrder: e.target.value })}
+                  className="input-field"
+                  placeholder="1, 2, 3..."
+                  min="1"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Status</label>
+              <div className="radio-group">
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="published"
+                    checked={formData.status === 'published'}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  />
+                  <span>Publicado</span>
+                </label>
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="draft"
+                    checked={formData.status === 'draft'}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  />
+                  <span>Rascunho</span>
+                </label>
+              </div>
+              <small className="field-hint">Rascunhos não aparecem na página inicial</small>
             </div>
 
             <div className="form-group">

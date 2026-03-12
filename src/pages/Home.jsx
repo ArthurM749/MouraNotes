@@ -15,6 +15,8 @@ export default function Home() {
   const [layout, setLayout] = useState('list'); // 'list' ou 'grid'
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedTag = searchParams.get('tag');
+  const [showTagSearch, setShowTagSearch] = useState(false);
+  const [allTags, setAllTags] = useState([]);
 
   useEffect(() => {
     async function loadPosts() {
@@ -23,6 +25,16 @@ export default function Home() {
         const allPosts = await getAllPosts();
         setPosts(allPosts);
         setFilteredPosts(allPosts);
+        
+        // Extrair todas as tags únicas
+        const tagsSet = new Set();
+        allPosts.forEach(post => {
+          if (post.tags) {
+            post.tags.forEach(tag => tagsSet.add(tag));
+          }
+        });
+        setAllTags(Array.from(tagsSet).sort());
+        
         setLoading(false);
       } catch (err) {
         console.error('Erro ao carregar posts:', err);
@@ -34,6 +46,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    // Detectar se digitou "/Tag"
+    if (searchTerm.toLowerCase() === '/tag' || searchTerm.toLowerCase() === '/tags') {
+      setShowTagSearch(true);
+      return;
+    } else {
+      setShowTagSearch(false);
+    }
+
     let filtered = posts;
 
     // Filtrar por tag se selecionada
@@ -158,6 +178,22 @@ export default function Home() {
         </div>
       )}
 
+      {showTagSearch && (
+        <div className="tag-search-panel">
+          <h3>🏷️ Todas as Tags</h3>
+          <p className="tag-search-hint">Clique em uma tag para filtrar os posts</p>
+          <div className="all-tags-grid">
+            {allTags.length > 0 ? (
+              allTags.map(tag => (
+                <Tag key={tag} name={tag} />
+              ))
+            ) : (
+              <p className="no-tags">Nenhuma tag criada ainda</p>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className={`posts-container ${layout}`}>
         {filteredPosts.length === 0 ? (
           <div className="empty-state">
@@ -197,13 +233,6 @@ export default function Home() {
                     day: 'numeric'
                   })}
                 </div>
-                {post.tags && post.tags.length > 0 && (
-                  <div className="tags-container">
-                    {post.tags.map(tag => (
-                      <Tag key={tag} name={tag} small />
-                    ))}
-                  </div>
-                )}
                 <p className="post-excerpt">
                   {post.content.substring(0, 200).replace(/[#*`]/g, '')}...
                 </p>

@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
-import { getPostBySlug, initDB } from '../database';
+import { getPostBySlug, initDB, incrementViews } from '../database';
+import Tag from '../components/Tag';
+import TOC from '../components/TOC';
+import ShareButtons from '../components/ShareButtons';
+import ShareDropdown from '../components/ShareDropdown';
+import { SkeletonPostList } from '../components/SkeletonPost';
 import './Post.css';
 
 export default function Post() {
@@ -15,6 +20,11 @@ export default function Post() {
       const foundPost = await getPostBySlug(slug);
       setPost(foundPost);
       setLoading(false);
+      
+      // Incrementar visualizações
+      if (foundPost) {
+        await incrementViews(foundPost.id);
+      }
     }
     loadPost();
   }, [slug]);
@@ -22,7 +32,10 @@ export default function Post() {
   if (loading) {
     return (
       <div className="container">
-        <div className="loading">Carregando...</div>
+        <div className="post-article">
+          <div className="skeleton-back-link"></div>
+          <SkeletonPostList count={1} layout="list" />
+        </div>
       </div>
     );
   }
@@ -39,22 +52,48 @@ export default function Post() {
     );
   }
 
+  const htmlContent = marked(post.content);
+  const currentUrl = window.location.href;
+
   return (
-    <div className="container">
+    <div className="container post-container">
+      <TOC content={htmlContent} />
+      
       <article className="post-article">
         <Link to="/" className="back-link">← Todos os posts</Link>
         
         <header className="post-header">
-          <h1 className="article-title">{post.title}</h1>
+          <div className="title-row">
+            <h1 className="article-title">{post.title}</h1>
+            <ShareDropdown url={currentUrl} title={post.title} />
+          </div>
+          
           <div className="article-meta">
             <time>
-              {new Date(post.created_at).toLocaleDateString('pt-BR', {
+              Publicado em {new Date(post.created_at).toLocaleDateString('pt-BR', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
               })}
             </time>
+            {post.updated_at && post.updated_at !== post.created_at && (
+              <time className="updated-date">
+                • Atualizado em {new Date(post.updated_at).toLocaleDateString('pt-BR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+            )}
           </div>
+          
+          {post.tags && post.tags.length > 0 && (
+            <div className="tags-container">
+              {post.tags.map(tag => (
+                <Tag key={tag} name={tag} />
+              ))}
+            </div>
+          )}
         </header>
 
         {post.image && (
@@ -64,9 +103,11 @@ export default function Post() {
         )}
 
         <div 
-          className="article-content"
-          dangerouslySetInnerHTML={{ __html: marked(post.content) }}
+          className="article-content post-body"
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
+        
+        <ShareButtons url={currentUrl} title={post.title} position="end" />
       </article>
     </div>
   );

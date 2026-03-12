@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import './Tag.css';
 
-// Cores harmoniosas em ordem: azul, verde, roxo, laranja, amarelo, vermelho
+// Cores pastéis suaves e confortáveis
 const TAG_COLORS = [
-  '#4A90E2', // Azul
-  '#7ED321', // Verde
-  '#9013FE', // Roxo
-  '#F5A623', // Laranja
-  '#F8E71C', // Amarelo
-  '#D0021B'  // Vermelho
+  '#A8D5E2', // Azul pastel
+  '#B4E7CE', // Verde pastel
+  '#DCC6E0', // Roxo pastel
+  '#FFD8BE', // Laranja pastel
+  '#FFF4A3', // Amarelo pastel
+  '#FFB3BA'  // Rosa pastel
 ];
 
 // Função para obter cor consistente para uma tag
