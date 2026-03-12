@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { getAllPosts, createPost, updatePost, deletePost, initDB, generateSlug } from '../database';
-import { verifyAdminPassword, updateAdminPassword } from '../auth';
+import { verifyAdminPassword, updateAdminPassword } from '../Auth';
 import Tag from '../components/Tag';
 import './Admin.css';
 
