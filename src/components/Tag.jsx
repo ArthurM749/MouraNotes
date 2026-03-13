@@ -22,7 +22,7 @@ function getTagColor(tagName) {
   return TAG_COLORS[index];
 }
 
-export default function Tag({ name, clickable = true, small = false }) {
+export default function Tag({ name, clickable = true, small = false, onClick }) {
   const color = getTagColor(name);
   
   const tagClass = `tag ${small ? 'tag-small' : ''}`;
@@ -32,6 +32,19 @@ export default function Tag({ name, clickable = true, small = false }) {
       <span className={tagClass} style={{ backgroundColor: color }}>
         {name}
       </span>
+    );
+  }
+
+  // Se tem onClick customizado, usar ele
+  if (onClick) {
+    return (
+      <button 
+        onClick={() => onClick(name)}
+        className={tagClass}
+        style={{ backgroundColor: color }}
+      >
+        {name}
+      </button>
     );
   }
 

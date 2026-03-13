@@ -1,157 +1,142 @@
 .share-buttons {
-    position: sticky;
-    top: 120px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-    z-index: 50;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem auto 2rem;
+  z-index: 50;
+}
+
+.share-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-right: 0.5rem;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--share-color, var(--color-text));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 1.25rem;
+  position: relative;
+}
+
+.share-btn:hover {
+  background-color: var(--share-color);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--share-color);
+}
+
+.share-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tooltip de "copiado" */
+.copy-tooltip {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  transform: translateY(-50%);
+  background-color: var(--color-accent);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.2s ease;
+}
+
+.copy-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid var(--color-accent);
+}
+
+/* Responsividade - sempre horizontal */
+@media (max-width: 1024px) {
+  .share-buttons {
+    gap: 0.75rem;
   }
-  
-  /* Posicionar na lateral */
-  .share-start {
-    float: left;
-    margin-left: -60px;
-    margin-right: 1rem;
-  }
-  
-  .share-end {
-    float: right;
-    margin-right: -60px;
-    margin-left: 1rem;
-  }
-  
-  .share-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--color-text-secondary);
-    writing-mode: vertical-rl;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-  }
-  
+}
+
+/* Tablet específico */
+@media (min-width: 769px) and (max-width: 1024px) {
   .share-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 44px;
+    height: 44px;
+    font-size: 1.35rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .share-buttons {
+    gap: 0.65rem;
+  }
+
+  .share-btn {
+    width: 42px;
+    height: 42px;
+    font-size: 1.25rem;
+  }
+
+  .share-label {
+    font-size: 0.7rem;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  .share-buttons {
+    gap: 0.5rem;
+    margin: 2rem auto 1.5rem;
+  }
+
+  .share-btn {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    color: var(--share-color, var(--color-text));
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    font-size: 1.25rem;
-    position: relative;
+    font-size: 1.2rem;
   }
-  
-  .share-btn:hover {
-    background-color: var(--share-color);
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: var(--share-color);
+
+  .share-label {
+    font-size: 0.65rem;
+    margin-right: 0.35rem;
   }
-  
-  .share-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
   }
-  
-  /* Tooltip de "copiado" */
-  .copy-tooltip {
-    position: absolute;
-    top: 50%;
-    right: calc(100% + 12px);
-    transform: translateY(-50%);
-    background-color: var(--color-accent);
-    color: white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.2s ease;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .copy-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -6px;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    border-left: 6px solid var(--color-accent);
-  }
-  
-  /* Mobile - mostrar na horizontal no final do post */
-  @media (max-width: 1024px) {
-    .share-buttons {
-      position: static;
-      float: none;
-      margin: 2rem auto;
-      flex-direction: row;
-      justify-content: center;
-      gap: 1rem;
-    }
-  
-    .share-start,
-    .share-end {
-      margin: 0;
-    }
-  
-    .share-label {
-      writing-mode: horizontal-tb;
-      margin-bottom: 0;
-      margin-right: 1rem;
-    }
-  
-    .copy-tooltip {
-      top: auto;
-      bottom: calc(100% + 12px);
-      right: 50%;
-      transform: translateX(50%);
-    }
-  
-    .copy-tooltip::after {
-      top: auto;
-      bottom: -6px;
-      right: 50%;
-      transform: translateX(50%);
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 6px solid var(--color-accent);
-    }
-  }
-  
-  /* Animação */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-50%) scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(-50%) scale(1);
-    }
-  }
-  
-  @media (max-width: 1024px) {
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateX(50%) scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(50%) scale(1);
-      }
-    }
-  }
+}

@@ -82,6 +82,14 @@ export default function Home() {
     setSearchParams({});
   };
 
+  const handleTagClick = (tag) => {
+    // Limpar campo de pesquisa
+    setSearchTerm('');
+    setShowTagSearch(false);
+    // Aplicar filtro de tag
+    setSearchParams({ tag });
+  };
+
   if (loading) {
     return (
       <div className="container">
@@ -185,7 +193,7 @@ export default function Home() {
           <div className="all-tags-grid">
             {allTags.length > 0 ? (
               allTags.map(tag => (
-                <Tag key={tag} name={tag} />
+                <Tag key={tag} name={tag} onClick={handleTagClick} />
               ))
             ) : (
               <p className="no-tags">Nenhuma tag criada ainda</p>

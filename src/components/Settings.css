@@ -1,206 +1,240 @@
 .settings-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.2s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.settings-content {
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
   }
-  
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.settings-body {
+  padding: 1.5rem;
+}
+
+.settings-section {
+  margin-bottom: 2rem;
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.settings-section h3 {
+  font-size: 1rem;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* Grid de Temas */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.theme-option {
+  position: relative;
+  padding: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-bg);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-option:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.theme-option.active {
+  border-color: var(--color-accent);
+  background-color: rgba(212, 81, 46, 0.05);
+}
+
+.theme-icon {
+  font-size: 2rem;
+}
+
+.theme-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  color: var(--color-accent);
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* Controles de Fonte */
+.font-size-controls {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.font-size-btn {
+  flex: 1;
+  max-width: 100px;
+  padding: 0.75rem;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.font-size-btn:hover {
+  border-color: var(--color-accent);
+  transform: scale(1.05);
+}
+
+.font-size-btn.active {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  color: white;
+}
+
+/* Tamanhos diferentes dos botões */
+.font-size-btn:nth-child(1) {
+  font-size: 0.875rem;
+}
+
+.font-size-btn:nth-child(2) {
+  font-size: 1rem;
+}
+
+.font-size-btn:nth-child(3) {
+  font-size: 1.125rem;
+}
+
+/* Info */
+.settings-info {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 6px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
   .settings-content {
-    background-color: var(--color-bg);
-    border-radius: 12px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    animation: slideUp 0.3s ease;
+    width: 95%;
+    max-height: 90vh;
+    border-radius: 12px 12px 0 0;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    animation: slideUpMobile 0.3s ease;
   }
-  
-  @keyframes slideUp {
+
+  @keyframes slideUpMobile {
     from {
-      transform: translateY(20px);
-      opacity: 0;
+      transform: translateY(100%);
     }
     to {
       transform: translateY(0);
-      opacity: 1;
     }
   }
-  
-  .settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-  }
-  
-  .settings-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: var(--color-text);
-  }
-  
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-  
-  .close-btn:hover {
-    background-color: var(--color-border);
-    color: var(--color-text);
-  }
-  
-  .settings-body {
-    padding: 1.5rem;
-  }
-  
-  .settings-section {
-    margin-bottom: 2rem;
-  }
-  
-  .settings-section:last-child {
-    margin-bottom: 0;
-  }
-  
-  .settings-section h3 {
-    font-size: 1rem;
-    color: var(--color-text);
-    margin-bottom: 1rem;
-    font-weight: 600;
-  }
-  
-  /* Grid de Temas */
+
   .theme-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-  
-  .theme-option {
-    position: relative;
-    padding: 1rem;
-    border: 2px solid var(--color-border);
-    border-radius: 8px;
-    background-color: var(--color-bg);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
     gap: 0.5rem;
   }
-  
-  .theme-option:hover {
-    border-color: var(--color-accent);
-    transform: translateY(-2px);
+
+  .settings-header {
+    padding: 1.25rem;
   }
-  
-  .theme-option.active {
-    border-color: var(--color-accent);
-    background-color: rgba(212, 81, 46, 0.05);
+
+  .settings-body {
+    padding: 1.25rem;
   }
-  
-  .theme-icon {
-    font-size: 2rem;
+
+  .settings-section {
+    margin-bottom: 1.5rem;
   }
-  
-  .theme-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-text);
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .settings-content {
+    max-width: 600px;
   }
-  
-  .check {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    color: var(--color-accent);
-    font-size: 1.25rem;
-    font-weight: bold;
-  }
-  
-  /* Controles de Fonte */
-  .font-size-controls {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: center;
-  }
-  
-  .font-size-btn {
-    flex: 1;
-    max-width: 100px;
-    padding: 0.75rem;
-    border: 2px solid var(--color-border);
-    border-radius: 8px;
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .font-size-btn:hover {
-    border-color: var(--color-accent);
-    transform: scale(1.05);
-  }
-  
-  .font-size-btn.active {
-    border-color: var(--color-accent);
-    background-color: var(--color-accent);
-    color: white;
-  }
-  
-  /* Tamanhos diferentes dos botões */
-  .font-size-btn:nth-child(1) {
-    font-size: 0.875rem;
-  }
-  
-  .font-size-btn:nth-child(2) {
-    font-size: 1rem;
-  }
-  
-  .font-size-btn:nth-child(3) {
-    font-size: 1.125rem;
-  }
-  
-  /* Info */
-  .settings-info {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    text-align: center;
-    margin: 0;
-    padding: 1rem;
-    background-color: rgba(0, 0, 0, 0.02);
-    border-radius: 6px;
-  }
-  
-  /* Mobile */
-  @media (max-width: 768px) {
-    .settings-content {
-      width: 95%;
-      max-height: 85vh;
-    }
-  
-    .theme-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+}

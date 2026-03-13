@@ -70,21 +70,25 @@
 .settings-btn {
   background: none;
   border: none;
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 6px;
   transition: all 0.2s ease;
   width: 40px;
   height: 40px;
+  color: var(--color-text-secondary);
+  font-weight: 300;
+  line-height: 1;
 }
 
 .settings-btn:hover {
   background-color: var(--color-hover);
-  transform: rotate(45deg);
+  color: var(--color-accent);
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {

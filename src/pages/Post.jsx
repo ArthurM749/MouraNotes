@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { getPostBySlug, initDB, incrementViews } from '../database';
@@ -6,6 +6,9 @@ import Tag from '../components/Tag';
 import TOC from '../components/TOC';
 import ShareButtons from '../components/ShareButtons';
 import ShareDropdown from '../components/ShareDropdown';
+import RelatedPosts from '../components/RelatedPosts';
+import CollectionNav from '../components/CollectionNav';
+import { useCodeHighlighting } from '../components/CodeBlock';
 import { SkeletonPostList } from '../components/SkeletonPost';
 import './Post.css';
 
@@ -13,6 +16,10 @@ export default function Post() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const contentRef = useRef(null);
+  
+  // Aplicar syntax highlighting
+  useCodeHighlighting(contentRef);
 
   useEffect(() => {
     async function loadPost() {
@@ -103,11 +110,20 @@ export default function Post() {
         )}
 
         <div 
+          ref={contentRef}
           className="article-content post-body"
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
         
+        <CollectionNav currentPost={post} />
+        
         <ShareButtons url={currentUrl} title={post.title} position="end" />
+        
+        <RelatedPosts 
+          currentPostId={post.id} 
+          tags={post.tags} 
+          limit={3} 
+        />
       </article>
     </div>
   );

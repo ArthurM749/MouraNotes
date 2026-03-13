@@ -23,7 +23,7 @@ export default function Header() {
               aria-label="Configurações"
               title="Configurações"
             >
-              ⚙️
+              ≡
             </button>
             <ThemeToggle />
           </nav>
