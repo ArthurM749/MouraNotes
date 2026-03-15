@@ -189,7 +189,7 @@ export default function Home() {
           <input
             type="text"
             className="search-input"
-            placeholder="Pesquisar posts..."
+            placeholder="Pesquisar posts ou digite '/tag'..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onBlur={() => {
