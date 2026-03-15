@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getAllPosts, initDB } from '../database';
 import { SkeletonPostList } from '../components/SkeletonPost';
 import Tag from '../components/Tag';
+import PopularPosts from '../components/PopularPosts';
 import './Home.css';
 
 export default function Home() {
@@ -17,6 +18,8 @@ export default function Home() {
   const selectedTag = searchParams.get('tag');
   const [showTagSearch, setShowTagSearch] = useState(false);
   const [allTags, setAllTags] = useState([]);
+  const [postsPerPage] = useState(12);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function loadPosts() {
@@ -46,10 +49,36 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Detectar se digitou "/Tag"
-    if (searchTerm.toLowerCase() === '/tag' || searchTerm.toLowerCase() === '/tags') {
-      setShowTagSearch(true);
-      return;
+    // Detectar busca de tags: /tag, /tag nome, /tag nome1, nome2
+    const tagSearchMatch = searchTerm.match(/^\/tags?\s*(.*)$/i);
+    
+    if (tagSearchMatch) {
+      const tagQuery = tagSearchMatch[1].trim();
+      
+      if (tagQuery === '') {
+        // Só /tag - mostrar painel
+        setShowTagSearch(true);
+        return;
+      } else {
+        // /tag nome ou /tag nome1, nome2
+        setShowTagSearch(false);
+        const searchTags = tagQuery.split(',').map(t => t.trim()).filter(t => t);
+        
+        let filtered = posts.filter(post => {
+          if (!post.tags || post.tags.length === 0) return false;
+          
+          // Verifica se o post tem pelo menos uma das tags buscadas
+          return searchTags.some(searchTag => 
+            post.tags.some(postTag => 
+              postTag.toLowerCase().includes(searchTag.toLowerCase())
+            )
+          );
+        });
+        
+        setFilteredPosts(filtered);
+        setCurrentPage(1);
+        return;
+      }
     } else {
       setShowTagSearch(false);
     }
@@ -76,6 +105,7 @@ export default function Home() {
     }
 
     setFilteredPosts(filtered);
+    setCurrentPage(1);
   }, [searchTerm, selectedTag, posts]);
 
   const clearTagFilter = () => {
@@ -88,6 +118,18 @@ export default function Home() {
     setShowTagSearch(false);
     // Aplicar filtro de tag
     setSearchParams({ tag });
+  };
+
+  // Paginação
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const hasMore = filteredPosts.length > indexOfLastPost;
+
+  const loadMore = () => {
+    setCurrentPage(prev => prev + 1);
+    // Scroll suave para os novos posts
+    window.scrollTo({ top: document.querySelector('.posts-container').offsetTop - 100, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -202,6 +244,8 @@ export default function Home() {
         </div>
       )}
 
+      {!showTagSearch && <PopularPosts limit={6} />}
+
       <div className={`posts-container ${layout}`}>
         {filteredPosts.length === 0 ? (
           <div className="empty-state">
@@ -223,17 +267,19 @@ export default function Home() {
             )}
           </div>
         ) : (
-          filteredPosts.map(post => (
+          currentPosts.map(post => (
             <article key={post.id} className="post-card">
-              {post.image && (
-                <div className="post-image">
-                  <img src={post.image} alt={post.title} />
-                </div>
-              )}
               <div className="post-content">
                 <h2 className="post-title">
                   <Link to={`/post/${post.slug}`}>{post.title}</Link>
                 </h2>
+                
+                {post.image && (
+                  <div className="post-image">
+                    <img src={post.image} alt={post.title} />
+                  </div>
+                )}
+                
                 <div className="post-meta">
                   {new Date(post.created_at).toLocaleDateString('pt-BR', {
                     year: 'numeric',
@@ -252,6 +298,17 @@ export default function Home() {
           ))
         )}
       </div>
+
+      {filteredPosts.length > 0 && hasMore && (
+        <div className="load-more-container">
+          <button onClick={loadMore} className="load-more-btn">
+            Carregar mais posts →
+          </button>
+          <p className="load-more-hint">
+            Mostrando {currentPosts.length} de {filteredPosts.length} posts
+          </p>
+        </div>
+      )}
     </div>
   );
 }

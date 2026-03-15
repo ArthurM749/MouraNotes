@@ -92,6 +92,11 @@ export default function Post() {
                 })}
               </time>
             )}
+            {post.views > 0 && (
+              <span className="views-count">
+                • 👁️ {post.views} {post.views === 1 ? 'visualização' : 'visualizações'}
+              </span>
+            )}
           </div>
           
           {post.tags && post.tags.length > 0 && (

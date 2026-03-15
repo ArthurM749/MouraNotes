@@ -4,6 +4,7 @@ import { marked } from 'marked';
 import { getAllPosts, createPost, updatePost, deletePost, initDB, generateSlug } from '../database';
 import { verifyAdminPassword, updateAdminPassword } from '../Auth';
 import Tag from '../components/Tag';
+import ImageUploader from '../components/ImageUploader';
 import './Admin.css';
 
 export default function Admin() {
@@ -184,15 +185,8 @@ export default function Admin() {
     });
   }
 
-  function handleImageUpload(e) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
+  function handleImageUploaded(imageUrl) {
+    setFormData({ ...formData, image: imageUrl });
   }
 
   if (!authenticated) {
@@ -347,20 +341,10 @@ export default function Admin() {
               />
             </div>
 
-            <div className="form-group">
-              <label>Imagem (opcional)</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="input-field"
-              />
-              {formData.image && (
-                <div className="image-preview">
-                  <img src={formData.image} alt="Preview" />
-                </div>
-              )}
-            </div>
+            <ImageUploader 
+              onImageUploaded={handleImageUploaded}
+              currentImage={formData.image}
+            />
 
             <div className="form-group">
               <label>Tags (separadas por vírgula)</label>
