@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { marked } from 'marked';
+
 import { getAllPosts, createPost, updatePost, deletePost, initDB, generateSlug } from '../database';
 import { verifyAdminPassword, updateAdminPassword } from '../Auth';
 import Tag from '../components/Tag';
 import ImageUploader from '../components/ImageUploader';
+import MarkdownEditor from '../components/MarkdownEditor';
 import './Admin.css';
 
 export default function Admin() {
@@ -21,7 +22,6 @@ export default function Admin() {
     collectionOrder: '',
     status: 'published'
   });
-  const [showPreview, setShowPreview] = useState(true);
   const [loginError, setLoginError] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [passwordChangeData, setPasswordChangeData] = useState({
@@ -411,42 +411,12 @@ export default function Admin() {
             </div>
 
             <div className="form-group">
-              <div className="editor-header">
-                <label>Conteúdo (Markdown)</label>
-                <div className="editor-tabs">
-                  <button
-                    type="button"
-                    className={`tab-button ${!showPreview ? 'active' : ''}`}
-                    onClick={() => setShowPreview(false)}
-                  >
-                    ✏️ Editar
-                  </button>
-                  <button
-                    type="button"
-                    className={`tab-button ${showPreview ? 'active' : ''}`}
-                    onClick={() => setShowPreview(true)}
-                  >
-                    👁️ Preview
-                  </button>
-                </div>
-              </div>
-              
-              <div className="editor-container">
-                {!showPreview ? (
-                  <textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    className="textarea-field editor-textarea"
-                    placeholder="Digite o conteúdo em Markdown..."
-                    rows="20"
-                  />
-                ) : (
-                  <div 
-                    className="markdown-preview"
-                    dangerouslySetInnerHTML={{ __html: marked(formData.content || '*Nenhum conteúdo ainda...*') }}
-                  />
-                )}
-              </div>
+              <label>Conteúdo (Markdown)</label>
+              <MarkdownEditor
+                value={formData.content}
+                onChange={(content) => setFormData({ ...formData, content })}
+                placeholder="Escreva seu conteúdo em Markdown..."
+              />
             </div>
 
             <div className="form-actions">

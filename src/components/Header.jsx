@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import ThemeToggle from './ThemeToggle';
 import Settings from './Settings';
 import './Header.css';
 
@@ -25,7 +24,6 @@ export default function Header() {
             >
               ≡
             </button>
-            <ThemeToggle />
           </nav>
         </div>
       </header>
