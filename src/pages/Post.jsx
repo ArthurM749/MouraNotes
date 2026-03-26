@@ -6,7 +6,9 @@ import Tag from '../components/Tag';
 import TOC from '../components/TOC';
 import ShareButtons from '../components/ShareButtons';
 import ShareDropdown from '../components/ShareDropdown';
+import LikeButton from '../components/LikeButton';
 import RelatedPosts from '../components/RelatedPosts';
+import AdminQuickActions from '../components/AdminQuickActions';
 import CollectionNav from '../components/CollectionNav';
 import { useCodeHighlighting } from '../components/CodeBlock';
 import { SkeletonPostList } from '../components/SkeletonPost';
@@ -21,18 +23,20 @@ export default function Post() {
   // Aplicar syntax highlighting
   useCodeHighlighting(contentRef);
 
-  useEffect(() => {
-    async function loadPost() {
-      await initDB();
-      const foundPost = await getPostBySlug(slug);
-      setPost(foundPost);
-      setLoading(false);
-      
-      // Incrementar visualizações
-      if (foundPost) {
-        await incrementViews(foundPost.id);
-      }
+  async function loadPost() {
+    setLoading(true);
+    await initDB();
+    const foundPost = await getPostBySlug(slug);
+    setPost(foundPost);
+    setLoading(false);
+    
+    // Incrementar visualizações
+    if (foundPost) {
+      await incrementViews(foundPost.id);
     }
+  }
+
+  useEffect(() => {
     loadPost();
   }, [slug]);
 
@@ -74,6 +78,8 @@ export default function Post() {
             <h1 className="article-title">{post.title}</h1>
             <ShareDropdown url={currentUrl} title={post.title} />
           </div>
+          
+          <AdminQuickActions post={post} onRefresh={loadPost} />
           
           <div className="article-meta">
             <time>
@@ -121,6 +127,10 @@ export default function Post() {
         />
         
         <CollectionNav currentPost={post} />
+        
+        <div className="post-actions">
+          <LikeButton postId={post.id} />
+        </div>
         
         <ShareButtons url={currentUrl} title={post.title} position="end" />
         

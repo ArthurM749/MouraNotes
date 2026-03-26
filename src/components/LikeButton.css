@@ -1,0 +1,103 @@
+/* =========================
+ LIKE BUTTON
+========================= */
+.like-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-sans);
+  }
+  
+  .like-button:hover:not(:disabled) {
+    background-color: var(--color-hover);
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+  
+  .like-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .like-button.loading {
+    pointer-events: none;
+  }
+  
+  /* =========================
+   LIKED STATE
+  ========================= */
+  .like-button.liked {
+    background-color: rgba(220, 38, 38, 0.1);
+    border-color: #dc2626;
+    color: #dc2626;
+  }
+  
+  .like-button.liked:hover:not(:disabled) {
+    background-color: rgba(220, 38, 38, 0.15);
+    transform: translateY(-1px) scale(1.02);
+  }
+  
+  .like-button.liked .like-icon {
+    animation: likeAnimation 0.3s ease;
+  }
+  
+  @keyframes likeAnimation {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* =========================
+   ICON
+  ========================= */
+  .like-icon {
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+  
+  .like-button:hover .like-icon {
+    transform: scale(1.1);
+  }
+  
+  .like-button.liked .like-icon {
+    color: #dc2626;
+  }
+  
+  /* =========================
+   COUNT
+  ========================= */
+  .like-count {
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  /* =========================
+   RESPONSIVE
+  ========================= */
+  @media (max-width: 480px) {
+    .like-button {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+  
+    .like-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }

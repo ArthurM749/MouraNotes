@@ -1,0 +1,338 @@
+/* =========================
+   OVERLAY — cobre a tela toda
+========================= */
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;                          /* top/right/bottom/left = 0 */
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;                    /* acima de tudo, inclusive do header sticky */
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* =========================
+   MODAL
+========================= */
+.auth-modal {
+  background-color: var(--color-bg);
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* scrollbar do modal */
+.auth-modal::-webkit-scrollbar        { width: 6px; }
+.auth-modal::-webkit-scrollbar-track  { background: transparent; }
+.auth-modal::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 3px; }
+
+/* =========================
+   BOTÃO FECHAR
+========================= */
+.auth-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.auth-modal-close:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text);
+}
+
+/* =========================
+   HEADER
+========================= */
+.auth-modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-modal-header h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+  font-family: var(--font-serif);
+}
+
+.auth-modal-header p {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* =========================
+   FORMULÁRIO
+========================= */
+.auth-form {
+  margin-bottom: 1.5rem;
+}
+
+.auth-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.auth-form .form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.auth-form .form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.auth-form .form-group input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(212, 81, 46, 0.12);
+}
+
+.auth-form .form-group input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+}
+
+.auth-form .form-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================
+   ERRO
+========================= */
+.auth-error {
+  background-color: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+[data-theme="dark"] .auth-error {
+  background-color: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #f87171;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+.auth-btn {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-serif);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-btn.primary {
+  background-color: var(--color-accent);
+  color: white;
+  margin-top: 0.5rem;
+}
+
+.auth-btn.primary:hover:not(:disabled) {
+  background-color: #c85a2e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 81, 46, 0.3);
+}
+
+.auth-btn.social {
+  background-color: var(--color-hover);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.auth-btn.social:hover:not(:disabled) {
+  background-color: var(--color-bg);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================
+   DIVISOR
+========================= */
+.auth-divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.auth-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.auth-divider span {
+  position: relative;
+  background-color: var(--color-bg);
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+/* =========================
+   BOTÕES SOCIAIS
+========================= */
+.auth-social {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-social .auth-btn {
+  flex: 1;
+}
+
+/* =========================
+   RODAPÉ
+========================= */
+.auth-footer {
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+}
+
+.auth-link {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+  font-family: var(--font-serif);
+  transition: opacity 0.2s ease;
+}
+
+.auth-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+/* Tablet e mobile — modal ocupa mais largura */
+@media (max-width: 600px) {
+  .auth-modal-overlay {
+    padding: 0;
+    align-items: flex-end;   /* sobe do rodapé no mobile */
+  }
+
+  .auth-modal {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 95vh;
+    padding: 2rem 1.5rem;
+    animation: slideUpMobile 0.3s ease;
+  }
+
+  @keyframes slideUpMobile {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .auth-modal-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .auth-social {
+    flex-direction: column;
+  }
+
+  .auth-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Telas muito pequenas */
+@media (max-width: 360px) {
+  .auth-modal {
+    padding: 1.5rem 1rem;
+  }
+
+  .auth-modal-header h2 {
+    font-size: 1.375rem;
+  }
+}

@@ -1,10 +1,16 @@
 import { supabase } from './supabase';
 
-// Inicialização não é necessária com Supabase
+// ================================================
+// INICIALIZAÇÃO
+// ================================================
+
 export async function initDB() {
-  // Supabase inicializa automaticamente
   return true;
 }
+
+// ================================================
+// POSTS
+// ================================================
 
 // Buscar todos os posts (só publicados por padrão)
 export async function getAllPosts(includesDrafts = false) {
@@ -14,7 +20,6 @@ export async function getAllPosts(includesDrafts = false) {
       .select('*')
       .order('created_at', { ascending: false });
 
-    // Se não incluir rascunhos, filtrar só publicados
     if (!includesDrafts) {
       query = query.eq('status', 'published');
     }
@@ -33,6 +38,33 @@ export async function getAllPosts(includesDrafts = false) {
   }
 }
 
+// Buscar posts de um autor específico
+export async function getPostsByAuthor(authorId, includesDrafts = false) {
+  try {
+    let query = supabase
+      .from('posts')
+      .select('*')
+      .eq('author_id', authorId)
+      .order('created_at', { ascending: false });
+
+    if (!includesDrafts) {
+      query = query.eq('status', 'published');
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Erro ao buscar posts do autor:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Erro ao buscar posts do autor:', error);
+    return [];
+  }
+}
+
 // Buscar post por slug
 export async function getPostBySlug(slug) {
   try {
@@ -43,10 +75,7 @@ export async function getPostBySlug(slug) {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        // Post não encontrado
-        return null;
-      }
+      if (error.code === 'PGRST116') return null;
       console.error('Erro ao buscar post:', error);
       return null;
     }
@@ -59,7 +88,17 @@ export async function getPostBySlug(slug) {
 }
 
 // Criar novo post
-export async function createPost(title, slug, content, image = null, tags = [], collection = null, collectionOrder = null, status = 'published') {
+export async function createPost(
+  title,
+  slug,
+  content,
+  image = null,
+  tags = [],
+  collection = null,
+  collectionOrder = null,
+  status = 'published',
+  authorId = null
+) {
   try {
     const { data, error } = await supabase
       .from('posts')
@@ -73,8 +112,9 @@ export async function createPost(title, slug, content, image = null, tags = [], 
           collection: collection || null,
           collection_order: collectionOrder || null,
           status: status || 'published',
-          views: 0
-        }
+          author_id: authorId || null,
+          views: 0,
+        },
       ])
       .select()
       .single();
@@ -92,7 +132,17 @@ export async function createPost(title, slug, content, image = null, tags = [], 
 }
 
 // Atualizar post
-export async function updatePost(id, title, slug, content, image = null, tags = [], collection = null, collectionOrder = null, status = 'published') {
+export async function updatePost(
+  id,
+  title,
+  slug,
+  content,
+  image = null,
+  tags = [],
+  collection = null,
+  collectionOrder = null,
+  status = 'published'
+) {
   try {
     const { data, error } = await supabase
       .from('posts')
@@ -105,7 +155,7 @@ export async function updatePost(id, title, slug, content, image = null, tags = 
         collection: collection || null,
         collection_order: collectionOrder || null,
         status: status || 'published',
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -213,9 +263,7 @@ export async function incrementViews(id) {
 // Buscar posts relacionados (mesmas tags)
 export async function getRelatedPosts(postId, tags, limit = 3) {
   try {
-    if (!tags || tags.length === 0) {
-      return [];
-    }
+    if (!tags || tags.length === 0) return [];
 
     const { data, error } = await supabase
       .from('posts')
@@ -251,11 +299,10 @@ export async function getAllTags() {
       return [];
     }
 
-    // Extrair todas as tags únicas
     const allTags = new Set();
-    data.forEach(post => {
+    data.forEach((post) => {
       if (post.tags) {
-        post.tags.forEach(tag => allTags.add(tag));
+        post.tags.forEach((tag) => allTags.add(tag));
       }
     });
 

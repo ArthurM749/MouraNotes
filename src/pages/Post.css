@@ -266,3 +266,43 @@
     margin-top: 1rem;
   }
 }
+
+/* ── Adicione estas regras ao Post.css existente ── */
+
+/* Autor: fica entre o título e a data */
+.article-author {
+  margin: 0.75rem 0 0.5rem;
+}
+
+.author-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  transition: color 0.2s;
+}
+
+.author-link:hover {
+  color: var(--color-accent);
+  opacity: 1;
+}
+
+.author-link strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.author-link:hover strong {
+  color: var(--color-accent);
+}
+
+.author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}

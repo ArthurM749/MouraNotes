@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Settings from './Settings';
+import UserMenu from './UserMenu';
 import './Header.css';
 
 export default function Header() {
@@ -24,6 +25,7 @@ export default function Header() {
             >
               ≡
             </button>
+            <UserMenu />
           </nav>
         </div>
       </header>
