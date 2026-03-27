@@ -375,3 +375,54 @@
       font-size: 0.875rem;
     }
   }
+
+  /* ── Cole no final do Profile.css existente ── */
+
+/* Agrupa "Editar Perfil" + "Admin" lado a lado */
+.profile-owner-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+/* Botão Admin — discreto, tom escuro */
+.admin-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background-color: #1a1a1a;
+  color: #e8e6e3;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-serif);
+  white-space: nowrap;
+}
+
+.admin-profile-btn:hover {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(212, 81, 46, 0.3);
+  opacity: 1;
+}
+
+[data-theme="dark"] .admin-profile-btn {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+@media (max-width: 480px) {
+  .profile-owner-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

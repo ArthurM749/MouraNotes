@@ -336,3 +336,13 @@
     font-size: 1.375rem;
   }
 }
+
+
+/* ── Login.css: botão social único ocupa largura total ── */
+.auth-social-single {
+  flex-direction: column;
+}
+
+.auth-social-single .auth-btn {
+  width: 100%;
+}

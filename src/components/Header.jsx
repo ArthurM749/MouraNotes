@@ -16,7 +16,6 @@ export default function Header() {
           </Link>
           <nav className="nav">
             <Link to="/" className="nav-link">Início</Link>
-            <Link to="/admin" className="nav-link">Admin</Link>
             <button
               className="settings-btn"
               onClick={() => setShowSettings(true)}
