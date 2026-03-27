@@ -1,19 +1,13 @@
 import { supabase } from './supabase';
 
-// ================================================
-// AUTENTICAÇÃO COM SUPABASE AUTH
-// ================================================
+// ── Login ──────────────────────────────────────────────────────────────────
 
-// Login com Google
 export async function signInWithGoogle() {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: window.location.origin
-      }
+      options: { redirectTo: window.location.origin },
     });
-    
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -22,16 +16,12 @@ export async function signInWithGoogle() {
   }
 }
 
-// Login com GitHub
 export async function signInWithGithub() {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
-      options: {
-        redirectTo: window.location.origin
-      }
+      options: { redirectTo: window.location.origin },
     });
-    
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -40,20 +30,15 @@ export async function signInWithGithub() {
   }
 }
 
-// Registro com Email e Senha
 export async function signUpWithEmail(email, password, username, fullName) {
   try {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          username,
-          full_name: fullName,
-        }
-      }
+        data: { username, full_name: fullName },
+      },
     });
-    
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -62,14 +47,12 @@ export async function signUpWithEmail(email, password, username, fullName) {
   }
 }
 
-// Login com Email e Senha
 export async function signInWithEmail(email, password) {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -78,7 +61,6 @@ export async function signInWithEmail(email, password) {
   }
 }
 
-// Logout
 export async function signOut() {
   try {
     const { error } = await supabase.auth.signOut();
@@ -90,7 +72,6 @@ export async function signOut() {
   }
 }
 
-// Obter usuário atual
 export async function getCurrentUser() {
   try {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -102,7 +83,6 @@ export async function getCurrentUser() {
   }
 }
 
-// Obter sessão atual
 export async function getSession() {
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
@@ -114,13 +94,11 @@ export async function getSession() {
   }
 }
 
-// Resetar senha (enviar email)
 export async function resetPassword(email) {
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    
     if (error) throw error;
     return { success: true };
   } catch (error) {
@@ -129,13 +107,9 @@ export async function resetPassword(email) {
   }
 }
 
-// Atualizar senha do usuário logado
 export async function updatePassword(newPassword) {
   try {
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword
-    });
-    
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) throw error;
     return { success: true };
   } catch (error) {
@@ -144,54 +118,52 @@ export async function updatePassword(newPassword) {
   }
 }
 
-// ================================================
-// PERFIS
-// ================================================
+// ── Perfis ─────────────────────────────────────────────────────────────────
 
-// Obter perfil do usuário
 export async function getUserProfile(userId) {
   try {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
-    
+      .maybeSingle(); // não lança erro se não encontrar
     if (error) throw error;
-    return { success: true, data };
+    return { success: true, data: data ?? null };
   } catch (error) {
     console.error('Erro ao obter perfil:', error);
     return { success: false, error: error.message };
   }
 }
 
-// Obter perfil por username
 export async function getProfileByUsername(username) {
   try {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('username', username)
-      .single();
-    
+      .maybeSingle();
     if (error) throw error;
-    return { success: true, data };
+    return { success: !!data, data: data ?? null };
   } catch (error) {
     console.error('Erro ao obter perfil:', error);
     return { success: false, error: error.message };
   }
 }
 
-// Atualizar perfil
 export async function updateProfile(userId, updates) {
   try {
+    // Remove campos undefined/null para não sobrescrever dados existentes
+    const clean = Object.fromEntries(
+      Object.entries(updates).filter(([, v]) => v !== undefined)
+    );
+
     const { data, error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(clean)
       .eq('id', userId)
       .select()
       .single();
-    
+
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -200,27 +172,45 @@ export async function updateProfile(userId, updates) {
   }
 }
 
-// Upload de avatar
+// ── Upload de avatar ───────────────────────────────────────────────────────
+// IMPORTANTE: o caminho DEVE começar com `{userId}/` para passar na
+// política RLS do Storage: (storage.foldername(name))[1] = auth.uid()::text
 export async function uploadAvatar(userId, file) {
   try {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}-${Date.now()}.${fileExt}`;
-    const filePath = `avatars/${fileName}`;
+    const fileExt  = file.name.split('.').pop().toLowerCase();
+    const fileName = `${Date.now()}.${fileExt}`;
+    // Pasta obrigatória = userId (a política do Storage valida isso)
+    const filePath = `${userId}/${fileName}`;
 
-    // Upload do arquivo
+    // Remove avatar anterior para não acumular arquivos
+    const { data: existing } = await supabase.storage
+      .from('avatars')
+      .list(userId);
+
+    if (existing && existing.length > 0) {
+      const oldPaths = existing.map((f) => `${userId}/${f.name}`);
+      await supabase.storage.from('avatars').remove(oldPaths);
+    }
+
+    // Faz o upload
     const { error: uploadError } = await supabase.storage
       .from('avatars')
-      .upload(filePath, file);
+      .upload(filePath, file, { cacheControl: '3600', upsert: true });
 
     if (uploadError) throw uploadError;
 
-    // Obter URL pública
+    // Obtém URL pública
     const { data: { publicUrl } } = supabase.storage
       .from('avatars')
       .getPublicUrl(filePath);
 
-    // Atualizar perfil com nova URL
-    await updateProfile(userId, { avatar_url: publicUrl });
+    // Atualiza avatar_url no perfil
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('id', userId);
+
+    if (updateError) throw updateError;
 
     return { success: true, url: publicUrl };
   } catch (error) {
@@ -229,11 +219,8 @@ export async function uploadAvatar(userId, file) {
   }
 }
 
-// ================================================
-// CURTIDAS
-// ================================================
+// ── Curtidas ───────────────────────────────────────────────────────────────
 
-// Curtir post
 export async function likePost(postId, userId) {
   try {
     const { data, error } = await supabase
@@ -241,7 +228,6 @@ export async function likePost(postId, userId) {
       .insert({ post_id: postId, user_id: userId })
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -250,7 +236,6 @@ export async function likePost(postId, userId) {
   }
 }
 
-// Descurtir post
 export async function unlikePost(postId, userId) {
   try {
     const { error } = await supabase
@@ -258,7 +243,6 @@ export async function unlikePost(postId, userId) {
       .delete()
       .eq('post_id', postId)
       .eq('user_id', userId);
-    
     if (error) throw error;
     return { success: true };
   } catch (error) {
@@ -267,7 +251,6 @@ export async function unlikePost(postId, userId) {
   }
 }
 
-// Verificar se usuário curtiu post
 export async function hasUserLikedPost(postId, userId) {
   try {
     const { data, error } = await supabase
@@ -275,22 +258,19 @@ export async function hasUserLikedPost(postId, userId) {
       .select('id')
       .eq('post_id', postId)
       .eq('user_id', userId)
-      .single();
-    
+      .maybeSingle();
     return !error && data !== null;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
 
-// Obter curtidas de um post
 export async function getPostLikes(postId) {
   try {
     const { data, error, count } = await supabase
       .from('likes')
       .select('*, profiles(*)', { count: 'exact' })
       .eq('post_id', postId);
-    
     if (error) throw error;
     return { success: true, likes: data, count };
   } catch (error) {
@@ -299,11 +279,8 @@ export async function getPostLikes(postId) {
   }
 }
 
-// ================================================
-// SEGUIR
-// ================================================
+// ── Seguir ─────────────────────────────────────────────────────────────────
 
-// Seguir usuário
 export async function followUser(followerId, followingId) {
   try {
     const { data, error } = await supabase
@@ -311,7 +288,6 @@ export async function followUser(followerId, followingId) {
       .insert({ follower_id: followerId, following_id: followingId })
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -320,7 +296,6 @@ export async function followUser(followerId, followingId) {
   }
 }
 
-// Deixar de seguir usuário
 export async function unfollowUser(followerId, followingId) {
   try {
     const { error } = await supabase
@@ -328,7 +303,6 @@ export async function unfollowUser(followerId, followingId) {
       .delete()
       .eq('follower_id', followerId)
       .eq('following_id', followingId);
-    
     if (error) throw error;
     return { success: true };
   } catch (error) {
@@ -337,7 +311,6 @@ export async function unfollowUser(followerId, followingId) {
   }
 }
 
-// Verificar se usuário segue outro
 export async function isFollowing(followerId, followingId) {
   try {
     const { data, error } = await supabase
@@ -345,22 +318,19 @@ export async function isFollowing(followerId, followingId) {
       .select('id')
       .eq('follower_id', followerId)
       .eq('following_id', followingId)
-      .single();
-    
+      .maybeSingle();
     return !error && data !== null;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
 
-// Obter seguidores de um usuário
 export async function getFollowers(userId) {
   try {
     const { data, error, count } = await supabase
       .from('follows')
       .select('follower_id, profiles!follows_follower_id_fkey(*)', { count: 'exact' })
       .eq('following_id', userId);
-    
     if (error) throw error;
     return { success: true, followers: data, count };
   } catch (error) {
@@ -369,14 +339,12 @@ export async function getFollowers(userId) {
   }
 }
 
-// Obter quem o usuário segue
 export async function getFollowing(userId) {
   try {
     const { data, error, count } = await supabase
       .from('follows')
       .select('following_id, profiles!follows_following_id_fkey(*)', { count: 'exact' })
       .eq('follower_id', userId);
-    
     if (error) throw error;
     return { success: true, following: data, count };
   } catch (error) {
@@ -385,74 +353,49 @@ export async function getFollowing(userId) {
   }
 }
 
-// ================================================
-// FUNÇÕES ANTIGAS DO ADMIN (MANTIDAS)
-// ================================================
+// ── Admin (senha hash) ─────────────────────────────────────────────────────
 
-// Hash de senha usando SHA-256 (Web Crypto API)
 async function hashPassword(password) {
   const encoder = new TextEncoder();
-  const data = encoder.encode(password);
+  const data    = encoder.encode(password);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex;
+  const hashArray  = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Verificar senha do admin
 export async function verifyAdminPassword(password) {
   try {
     const hashedPassword = await hashPassword(password);
-    
     const { data, error } = await supabase
       .from('admin_config')
       .select('password_hash')
       .eq('id', 1)
       .single();
-
-    if (error) {
-      console.error('Erro ao verificar senha:', error);
-      return false;
-    }
-
-    return data && data.password_hash === hashedPassword;
-  } catch (error) {
-    console.error('Erro ao verificar senha:', error);
+    if (error) return false;
+    return data?.password_hash === hashedPassword;
+  } catch {
     return false;
   }
 }
 
-// Atualizar senha do admin
 export async function updateAdminPassword(currentPassword, newPassword) {
   try {
-    // Verificar senha atual
     const isValid = await verifyAdminPassword(currentPassword);
-    if (!isValid) {
-      return { success: false, error: 'Senha atual incorreta' };
-    }
+    if (!isValid) return { success: false, error: 'Senha atual incorreta' };
 
-    // Criar hash da nova senha
     const hashedPassword = await hashPassword(newPassword);
-
-    // Atualizar no banco
     const { error } = await supabase
       .from('admin_config')
       .update({ password_hash: hashedPassword })
       .eq('id', 1);
 
-    if (error) {
-      console.error('Erro ao atualizar senha:', error);
-      return { success: false, error: 'Erro ao salvar nova senha' };
-    }
-
+    if (error) return { success: false, error: 'Erro ao salvar nova senha' };
     return { success: true };
-  } catch (error) {
-    console.error('Erro ao atualizar senha:', error);
+  } catch {
     return { success: false, error: 'Erro ao processar senha' };
   }
 }
 
-// Verificar se senha já está configurada
 export async function isPasswordConfigured() {
   try {
     const { data, error } = await supabase
@@ -460,14 +403,9 @@ export async function isPasswordConfigured() {
       .select('password_hash')
       .eq('id', 1)
       .single();
-
-    if (error) {
-      return false;
-    }
-
-    return data && data.password_hash;
-  } catch (error) {
-    console.error('Erro ao verificar configuração:', error);
+    if (error) return false;
+    return !!(data?.password_hash);
+  } catch {
     return false;
   }
 }
