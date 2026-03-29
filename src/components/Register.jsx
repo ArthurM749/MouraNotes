@@ -73,14 +73,14 @@ export default function Register({ isOpen, onClose, onSwitchToLogin }) {
             <label htmlFor="reg-username">Username</label>
             <input id="reg-username" name="username" type="text"
               value={formData.username} onChange={handleChange}
-              placeholder="johndoe" required disabled={loading} />
+              placeholder="seunome" required disabled={loading} />
           </div>
 
           <div className="form-group">
-            <label htmlFor="reg-fullName">Nome Completo</label>
+            <label htmlFor="reg-fullName">Nome</label>
             <input id="reg-fullName" name="fullName" type="text"
               value={formData.fullName} onChange={handleChange}
-              placeholder="John Doe" disabled={loading} />
+              placeholder="Seu nome" disabled={loading} />
           </div>
 
           <div className="form-group">
