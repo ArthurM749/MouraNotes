@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getAllPosts, initDB } from '../database';
 import { supabase } from '../supabase';
 import { SkeletonPostList } from '../components/SkeletonPost';
+import AdminQuickActions from '../components/AdminQuickActions';
 import Tag from '../components/Tag';
 import PopularPosts from '../components/PopularPosts';
 import './Home.css';
@@ -43,27 +44,28 @@ export default function Home() {
   const isUserSearch = searchTerm.startsWith('@');
   const userQuery    = isUserSearch ? searchTerm.slice(1) : '';
 
-  // ── Carregar posts ────────────────────────────────────────────────────────
-  useEffect(() => {
-    async function loadPosts() {
-      try {
-        await initDB();
-        const allPosts = await getAllPosts();
-        setPosts(allPosts);
-        setFilteredPosts(allPosts);
+  // ── Carregar posts (declarada fora para ser usada como onRefresh) ─────────
+  async function loadPosts() {
+    try {
+      await initDB();
+      const allPosts = await getAllPosts();
+      setPosts(allPosts);
+      setFilteredPosts(allPosts);
 
-        const tagsSet = new Set();
-        allPosts.forEach(post => {
-          if (post.tags) post.tags.forEach(tag => tagsSet.add(tag));
-        });
-        setAllTags(Array.from(tagsSet).sort());
-      } catch (err) {
-        console.error('Erro ao carregar posts:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+      const tagsSet = new Set();
+      allPosts.forEach(post => {
+        if (post.tags) post.tags.forEach(tag => tagsSet.add(tag));
+      });
+      setAllTags(Array.from(tagsSet).sort());
+    } catch (err) {
+      console.error('Erro ao carregar posts:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     loadPosts();
   }, []);
 
@@ -347,6 +349,9 @@ export default function Home() {
             ) : (
               currentPosts.map(post => (
                 <article key={post.id} className="post-card">
+                  {/* Barra de admin — visível somente para o admin */}
+                  <AdminQuickActions post={post} onRefresh={loadPosts} />
+
                   <div className="post-content">
                     <h2 className="post-title">
                       <Link to={`/post/${post.slug}`}>{post.title}</Link>

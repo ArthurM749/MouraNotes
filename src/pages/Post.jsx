@@ -12,6 +12,7 @@ import RelatedPosts from '../components/RelatedPosts';
 import CollectionNav from '../components/CollectionNav';
 import { useCodeHighlighting } from '../components/CodeBlock';
 import { SkeletonPostList } from '../components/SkeletonPost';
+import AdminQuickActions from '../components/AdminQuickActions';
 import './Post.css';
 
 export default function Post() {
@@ -98,6 +99,9 @@ export default function Post() {
 
       <article className="post-article">
         <Link to="/" className="back-link">← Todos os posts</Link>
+
+        {/* Barra de ações rápidas — visível somente para o admin */}
+        <AdminQuickActions post={post} onRefresh={() => window.location.reload()} />
 
         <header className="post-header">
           <div className="title-row">
