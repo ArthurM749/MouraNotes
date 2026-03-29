@@ -16,13 +16,25 @@ import AdminQuickActions from '../components/AdminQuickActions';
 import './Post.css';
 
 export default function Post() {
-  const { slug }         = useParams();
-  const [post, setPost]  = useState(null);
-  const [author, setAuthor] = useState(null); // perfil do autor
-  const [loading, setLoading] = useState(true);
+  const { slug }            = useParams();
+  const [post, setPost]     = useState(null);
+  const [author, setAuthor] = useState(null);
+  const [loading, setLoading]       = useState(true);
+  const [lightboxSrc, setLightboxSrc] = useState(null);
   const contentRef = useRef(null);
 
   useCodeHighlighting(contentRef);
+
+  // Lightbox: captura cliques em imagens do conteúdo
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    function handleImgClick(e) {
+      if (e.target.tagName === 'IMG') setLightboxSrc(e.target.src);
+    }
+    el.addEventListener('click', handleImgClick);
+    return () => el.removeEventListener('click', handleImgClick);
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -193,6 +205,26 @@ export default function Post() {
           limit={3}
         />
       </article>
+
+      {/* ── Lightbox ── */}
+      {lightboxSrc && (
+        <div
+          className="lightbox-overlay"
+          onClick={() => setLightboxSrc(null)}
+        >
+          <button
+            className="lightbox-close"
+            onClick={() => setLightboxSrc(null)}
+            aria-label="Fechar"
+          >×</button>
+          <img
+            src={lightboxSrc}
+            alt="Imagem ampliada"
+            className="lightbox-img"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
