@@ -12,6 +12,7 @@ import {
 } from '../Auth';
 import { getPostsByAuthor } from '../database';
 import Tag from '../components/Tag';
+import { SkeletonProfile } from '../components/SkeletonPost';
 import './Profile.css';
 
 export default function Profile() {
@@ -69,7 +70,7 @@ export default function Profile() {
     return (
       <div className="profile-page">
         <div className="container">
-          <div className="profile-loading">Carregando perfil...</div>
+          <SkeletonProfile />
         </div>
       </div>
     );

@@ -1,127 +1,217 @@
+/* ================================================================
+   BASE — animação shimmer compartilhada por todos os skeletons
+================================================================ */
 .skeleton-post {
-    animation: fadeIn 0.3s ease-out;
-  }
-  
-  /* Animação de pulso */
-  @keyframes skeleton-pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
-  
-  /* Elementos base do skeleton */
-  .skeleton-title,
-  .skeleton-meta,
-  .skeleton-text,
-  .skeleton-image {
-    background: linear-gradient(
-      90deg,
-      var(--color-border) 0%,
-      rgba(0, 0, 0, 0.05) 50%,
-      var(--color-border) 100%
-    );
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s ease-in-out infinite;
-    border-radius: 4px;
-  }
-  
-  @keyframes skeleton-loading {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-  
-  /* Skeleton em layout de lista */
-  .skeleton-list {
-    padding-bottom: 3rem;
-    border-bottom: 1px solid var(--color-border);
-  }
-  
-  .skeleton-list:last-child {
-    border-bottom: none;
-  }
-  
-  .skeleton-title {
-    height: 1.5rem;
-    width: 70%;
-    margin-bottom: 1rem;
-  }
-  
-  .skeleton-title.large {
-    height: 2rem;
-    width: 80%;
-  }
-  
-  .skeleton-meta {
-    height: 0.875rem;
-    width: 30%;
-    margin-bottom: 1.5rem;
-  }
-  
-  .skeleton-text {
-    height: 1rem;
-    width: 100%;
-    margin-bottom: 0.75rem;
-  }
-  
-  .skeleton-text.short {
-    width: 60%;
-  }
-  
-  /* Skeleton em layout de grid */
-  .skeleton-grid {
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .skeleton-image {
-    width: 100%;
-    height: 200px;
-    border-radius: 0;
-  }
-  
-  .skeleton-grid .skeleton-content {
-    padding: 1.5rem;
-  }
-  
-  .skeleton-grid .skeleton-title {
-    width: 90%;
-    margin-bottom: 0.75rem;
-  }
-  
-  .skeleton-grid .skeleton-meta {
-    width: 50%;
-    margin-bottom: 1rem;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  /* Dark mode */
-  [data-theme="dark"] .skeleton-title,
-  [data-theme="dark"] .skeleton-meta,
-  [data-theme="dark"] .skeleton-text,
-  [data-theme="dark"] .skeleton-image {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-    background-size: 200% 100%;
-  }
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Bloco base reutilizável */
+.skel-block,
+.skeleton-title,
+.skeleton-meta,
+.skeleton-text,
+.skeleton-image {
+  background: linear-gradient(
+    90deg,
+    var(--color-border)       0%,
+    rgba(0, 0, 0, 0.05)      50%,
+    var(--color-border)      100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+@keyframes skeleton-loading {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Dark mode */
+[data-theme="dark"] .skel-block,
+[data-theme="dark"] .skeleton-title,
+[data-theme="dark"] .skeleton-meta,
+[data-theme="dark"] .skeleton-text,
+[data-theme="dark"] .skeleton-image {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.05)  0%,
+    rgba(255,255,255,0.10) 50%,
+    rgba(255,255,255,0.05) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* ================================================================
+   HOME — SkeletonPost original
+================================================================ */
+.skeleton-list {
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.skeleton-list:last-child { border-bottom: none; }
+
+.skeleton-title        { height: 1.5rem; width: 70%;  margin-bottom: 1rem; }
+.skeleton-title.large  { height: 2rem;   width: 80%; }
+.skeleton-meta         { height: 0.875rem; width: 30%; margin-bottom: 1.5rem; }
+.skeleton-text         { height: 1rem;   width: 100%; margin-bottom: 0.75rem; }
+.skeleton-text.short   { width: 60%; }
+
+.skeleton-grid {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.skeleton-image { width: 100%; height: 200px; border-radius: 0; }
+.skeleton-grid .skeleton-content { padding: 1.5rem; }
+.skeleton-grid .skeleton-title   { width: 90%; margin-bottom: 0.75rem; }
+.skeleton-grid .skeleton-meta    { width: 50%; margin-bottom: 1rem; }
+
+/* ================================================================
+   MEUS POSTS — SkeletonMyPosts
+================================================================ */
+
+/* Cabeçalho */
+.sk-my-posts   { animation: fadeIn 0.3s ease-out; }
+.sk-my-header  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.sk-page-title { height: 2rem; width: 180px; }
+.sk-create-btn { height: 2.25rem; width: 120px; border-radius: 8px; }
+
+/* Chips de stats */
+.sk-chip-row   { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.sk-chip       { height: 1.75rem; width: 90px; border-radius: 20px; }
+
+/* Controles */
+.sk-controls-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.sk-search-bar   { height: 2.5rem; flex: 1; min-width: 200px; border-radius: 8px; }
+.sk-select       { height: 2.5rem; width: 140px; border-radius: 8px; }
+
+/* Item de post */
+.sk-my-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.sk-my-thumb    { width: 72px; height: 72px; border-radius: 6px; flex-shrink: 0; }
+.sk-my-body     { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.sk-my-title-row{ display: flex; align-items: center; gap: 0.75rem; }
+.sk-my-title    { height: 1.1rem; width: 55%; }
+.sk-my-badge    { height: 1.1rem; width: 70px; border-radius: 4px; }
+.sk-my-meta     { height: 0.8rem; width: 40%; }
+.sk-tag-row     { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.sk-tag         { height: 1.4rem; width: 56px; border-radius: 5px; }
+
+.sk-my-actions  { display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0; }
+.sk-action-btn  { height: 2rem; width: 80px; border-radius: 6px; }
+
+/* ================================================================
+   POSTS CURTIDOS — SkeletonLikedPosts
+================================================================ */
+.sk-liked-posts { animation: fadeIn 0.3s ease-out; }
+
+.sk-page-header { margin-bottom: 2rem; }
+.sk-page-sub    { height: 0.875rem; width: 140px; margin-top: 0.5rem; }
+
+/* Grade de cards */
+.sk-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.sk-card {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.sk-card-img   { width: 100%; height: 160px; border-radius: 0; }
+.sk-card-body  { padding: 1.1rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.sk-card-title { height: 1rem;    width: 80%; }
+.sk-card-title.short { width: 55%; }
+.sk-card-line  { height: 0.875rem; width: 100%; }
+.sk-card-line.short  { width: 65%; }
+.sk-card-meta  { height: 0.75rem; width: 50%; margin-top: 0.25rem; }
+
+/* ================================================================
+   PERFIL — SkeletonProfile
+================================================================ */
+.sk-profile { animation: fadeIn 0.3s ease-out; }
+
+/* Bloco do header */
+.sk-profile-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-hover);
+  margin-bottom: 2rem;
+}
+
+.sk-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sk-profile-info        { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.sk-profile-name-row    { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.sk-profile-name        { height: 1.875rem; width: 200px; }
+.sk-profile-btn         { height: 2rem; width: 110px; border-radius: 8px; }
+.sk-profile-handle      { height: 1rem; width: 120px; }
+.sk-profile-bio         { height: 0.9rem; width: 90%; }
+.sk-profile-bio.short   { width: 60%; }
+
+.sk-profile-stats       { display: flex; gap: 2rem; margin-top: 0.5rem; }
+.sk-profile-stat-item   { display: flex; flex-direction: column; gap: 0.35rem; }
+.sk-stat-val            { height: 1.5rem; width: 36px; }
+.sk-stat-lbl            { height: 0.75rem; width: 56px; }
+
+.sk-profile-link        { height: 0.875rem; width: 130px; }
+.sk-profile-link.short  { width: 80px; }
+
+/* Tabs */
+.sk-tabs-bar  { border-bottom: 2px solid var(--color-border); margin-bottom: 2rem; padding-bottom: 0; }
+.sk-tab-item  { height: 2.5rem; width: 110px; border-radius: 4px; margin-bottom: -2px; }
+
+/* ================================================================
+   RESPONSIVO
+================================================================ */
+@media (max-width: 768px) {
+  .sk-my-item     { flex-direction: column; }
+  .sk-my-thumb    { width: 100%; height: 140px; }
+  .sk-my-actions  { flex-direction: row; flex-wrap: wrap; }
+  .sk-action-btn  { width: 70px; }
+
+  .sk-profile-header { flex-direction: column; align-items: center; padding: 1.5rem; text-align: center; }
+  .sk-avatar          { width: 90px; height: 90px; }
+  .sk-profile-name-row{ justify-content: center; }
+  .sk-profile-stats   { justify-content: center; gap: 1.5rem; }
+
+  .sk-cards-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .sk-chip-row    { gap: 0.5rem; }
+  .sk-chip        { width: 72px; }
+  .sk-controls-row{ flex-direction: column; }
+  .sk-select      { width: 100%; }
+}

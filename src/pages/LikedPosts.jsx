@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { getLikedPosts } from '../database.admin';
 import Tag from '../components/Tag';
+import { SkeletonLikedPosts } from '../components/SkeletonPost';
 import './LikedPosts.css';
 
 export default function LikedPosts() {
@@ -23,10 +24,7 @@ export default function LikedPosts() {
   }, [user]);
 
   useEffect(() => {
-    if (!search.trim()) {
-      setFiltered(posts);
-      return;
-    }
+    if (!search.trim()) { setFiltered(posts); return; }
     const q = search.toLowerCase();
     setFiltered(
       posts.filter(
@@ -45,11 +43,12 @@ export default function LikedPosts() {
     setLoading(false);
   }
 
+  /* ── SKELETON LOADING ── */
   if (authLoading || loading) {
     return (
       <div className="container">
         <div className="liked-posts-page">
-          <p style={{ color: 'var(--color-text-secondary)' }}>Carregando...</p>
+          <SkeletonLikedPosts />
         </div>
       </div>
     );
@@ -87,12 +86,9 @@ export default function LikedPosts() {
                 <button
                   onClick={() => setSearch('')}
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--color-accent)',
-                    cursor: 'pointer',
-                    fontWeight: 600,
-                    fontSize: 'inherit',
+                    background: 'none', border: 'none',
+                    color: 'var(--color-accent)', cursor: 'pointer',
+                    fontWeight: 600, fontSize: 'inherit',
                   }}
                 >
                   Limpar
@@ -108,21 +104,12 @@ export default function LikedPosts() {
         ) : (
           <div className="liked-grid">
             {filtered.map((post) => (
-              <Link
-                to={`/post/${post.slug}`}
-                key={post.id}
-                className="liked-card"
-              >
+              <Link to={`/post/${post.slug}`} key={post.id} className="liked-card">
                 {post.image ? (
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="liked-card-img"
-                  />
+                  <img src={post.image} alt={post.title} className="liked-card-img" />
                 ) : (
                   <div className="liked-card-img-placeholder" />
                 )}
-
                 <div className="liked-card-body">
                   <h3 className="liked-card-title">{post.title}</h3>
                   {post.content && (
@@ -141,16 +128,11 @@ export default function LikedPosts() {
                     <span className="liked-heart">❤️</span>
                     <span>
                       {new Date(post.created_at).toLocaleDateString('pt-BR', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
+                        day: 'numeric', month: 'short', year: 'numeric',
                       })}
                     </span>
                     {post.views > 0 && (
-                      <>
-                        <span>·</span>
-                        <span>👁️ {post.views}</span>
-                      </>
+                      <><span>·</span><span>👁️ {post.views}</span></>
                     )}
                   </div>
                 </div>

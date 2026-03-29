@@ -5,6 +5,7 @@ import Typography from '@tiptap/extension-typography';
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../supabase';
 import './MarkdownEditor.css';
+import './ImageUploader.css';
 
 // ── Upload de imagem para Supabase Storage ──────────────────────────────────
 async function uploadInlineImage(file) {
