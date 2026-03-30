@@ -13,16 +13,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- KaTeX CSS: estilos das fórmulas -->
+    <!-- KaTeX — fórmulas matemáticas -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 
     <!--
-      KaTeX JS: SEM defer e SEM async.
-      Scripts <type="module"> são sempre deferidos pelo browser,
-      então este script (síncrono) executa ANTES do React montar,
-      garantindo que window.katex exista tanto no desktop quanto no mobile.
+      highlight.js — syntax highlighting.
+      Sem defer/async: executa antes dos módulos React (type="module")
+      para que window.hljs exista quando o componente montar.
     -->
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/build/highlight.min.js"></script>
   </head>
   <body>
     <div id="root"></div>
