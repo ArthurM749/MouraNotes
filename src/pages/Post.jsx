@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
+import { renderWithMath } from '../utils/renderMath';
 import { getPostBySlug, initDB, incrementViews } from '../database';
 import { supabase } from '../supabase';
 import Tag from '../components/Tag';
@@ -98,7 +99,7 @@ export default function Post() {
     );
   }
 
-  const htmlContent = marked(post.content || '');
+  const htmlContent = renderWithMath(post.content || '', marked);
   const currentUrl  = window.location.href;
 
   // Exibe sempre pelo @username; se não tiver, usa o full_name como fallback
